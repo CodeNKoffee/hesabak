@@ -1,9 +1,10 @@
 {
   "name": "hesabak-scripts",
   "private": true,
-  "description": "Tooling for the README media only. The app itself has no dependencies and no build step.",
+  "description": "Tooling for tests and README media only. The app itself has no dependencies and no build step.",
   "type": "module",
   "scripts": {
+    "test": "node smoke.mjs",
     "media": "node readme-media.mjs"
   },
   "devDependencies": {

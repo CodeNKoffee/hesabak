@@ -38,6 +38,7 @@ or build something new from it. Contributions back are welcome too.
 2. Serve the folder locally: `npx serve .`, then open the address it prints.
 3. Make your change. Check it in Chrome and Safari or Firefox, light and dark mode, and at phone width.
 4. Print to PDF in each template you touched and confirm it is still one page.
+   Then run the automated checks, the same ones CI runs: `cd scripts && npm install && npx playwright install chromium && npm test`.
 5. If the change is visible, re-record the README media: `cd scripts && npm install && npm run media`.
 6. Bump `VERSION` in `sw.js` so installed copies update, and add a line under **Unreleased** in [CHANGELOG.md](CHANGELOG.md).
 7. Open a pull request using the template, with a before and after screenshot.

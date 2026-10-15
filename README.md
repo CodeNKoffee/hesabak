@@ -14,6 +14,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/CodeNKoffee/hesabak/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/CodeNKoffee/hesabak/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="No server" src="https://img.shields.io/badge/server-none-141414">
   <img alt="No build step" src="https://img.shields.io/badge/build-none-141414">
   <img alt="Installable PWA, works offline" src="https://img.shields.io/badge/PWA-offline-F26A1B">
@@ -161,6 +162,7 @@ One HTML file with inline CSS and JavaScript. No framework, no dependencies, no 
 | Offline | `sw.js`, network-first with a cache fallback |
 | Install | `manifest.webmanifest` and icons |
 | Security | `vercel.json`: strict CSP, `connect-src 'self'`, no referrer, no framing |
+| Checks | `scripts/smoke.mjs` in GitHub Actions: loads without errors, one A4 page per template, receipts, saving, phone width, SEO and docs files |
 | Search and sharing | `robots.txt`, `sitemap.xml`, Open Graph and Twitter cards, schema.org `WebApplication` data, `llms.txt`, and a `<noscript>` summary for crawlers |
 
 ## Run it locally
@@ -200,7 +202,8 @@ hesabak/
 ├── .github/                issue and pull request templates
 ├── docs/readme/            banner, GIFs and screenshots for this README
 ├── docs/wiki/              the GitHub wiki's pages (published by scripts/publish-wiki.sh)
-└── scripts/                README media recorder (not part of the app)
+└── scripts/                tests and README media (not part of the app)
+    ├── smoke.mjs           the checks CI runs
     ├── readme-media.mjs
     └── readme/             banner layout and its fonts (OFL)
 ```

@@ -1,0 +1,35 @@
+# Free checks on every push and pull request: the app loads without errors, every template prints
+# on one A4 page, receipts and saving work, phone width is clean, and the SEO and docs files are valid.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: scripts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: npm install --no-audit --no-fund && npx playwright install --with-deps chromium
+      - name: Smoke tests
+        run: npm test
+      - name: Wiki publish script is valid shell
+        run: bash -n publish-wiki.sh
