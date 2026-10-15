@@ -1,0 +1,20 @@
+# Hesabak
+
+> Hesabak (حسابك, Egyptian Arabic for "your bill") is a free, open-source invoice and receipt maker that runs entirely in the browser. No account, no server, works offline. MIT licence.
+
+## What it does
+
+- Makes invoices and receipts that print as one-page A4 PDFs.
+- Bills by day rate from hours worked (hours ÷ hours per day, rounded down to 0.1 day) or by line items.
+- Optional tax: none, Egypt VAT 14%, or a custom label and rate, included in the price or added on top.
+- Currencies: EGP, USD, EUR, AED.
+- Profiles hold the sender's details, wordmark, colours and layout; clients are saved for reuse.
+- Four templates: Standard, Studio, Ledger, Bold. Blocks can be reordered or hidden; placeholders such as {client} and {balance} fill in on the page.
+- Receipts list each payment's method, date and reference.
+- Data stays in the browser's local storage and can be exported or imported as JSON.
+
+## Links
+
+- App: https://hesabak.hatemsoliman.dev/
+- Source: https://github.com/CodeNKoffee/hesabak
+- Author: https://hatemsoliman.dev

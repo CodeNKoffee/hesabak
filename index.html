@@ -3,12 +3,67 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hesabak</title>
-<meta name="description" content="Hesabak: invoices and receipts made in your browser. Nothing leaves your device.">
+<title>Hesabak · Free invoice and receipt maker for freelancers</title>
+<meta name="description" content="Make professional invoices and receipts in your browser. Day rates from hours, line items, VAT, payment history and one-page A4 PDFs. Free, offline, no account, and nothing leaves your device.">
+<meta name="application-name" content="Hesabak">
+<meta name="apple-mobile-web-app-title" content="Hesabak">
+<meta name="author" content="Hatem Soliman">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#141414">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://hesabak.hatemsoliman.dev/">
+<link rel="alternate" hreflang="en" href="https://hesabak.hatemsoliman.dev/">
+<link rel="alternate" hreflang="x-default" href="https://hesabak.hatemsoliman.dev/">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<!-- Sharing previews -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hesabak">
+<meta property="og:title" content="Hesabak · Free invoice and receipt maker">
+<meta property="og:description" content="Invoices and receipts made in your browser. Four templates, receipts with payment history, VAT, A4 PDFs. Free, offline, no account.">
+<meta property="og:url" content="https://hesabak.hatemsoliman.dev/">
+<meta property="og:image" content="https://hesabak.hatemsoliman.dev/og.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Hesabak: three printed invoices and receipts beside the headline Bill like a studio, keep it all on your machine.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hesabak · Free invoice and receipt maker">
+<meta name="twitter:description" content="Invoices and receipts made in your browser. Free, offline, no account.">
+<meta name="twitter:image" content="https://hesabak.hatemsoliman.dev/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Hesabak",
+  "alternateName": "حسابك",
+  "url": "https://hesabak.hatemsoliman.dev/",
+  "image": "https://hesabak.hatemsoliman.dev/og.png",
+  "description": "A free invoice and receipt maker that runs in the browser. Profiles, four templates, day rates from hours or line items, VAT, receipts with payment history and one-page A4 PDFs. No account, works offline, and data never leaves the device.",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "Invoicing",
+  "operatingSystem": "Any (web browser)",
+  "browserRequirements": "Requires JavaScript. Works offline once opened.",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": [
+    "Invoices and receipts with payment history",
+    "Day rate from hours, or line items",
+    "Egypt VAT 14% or a custom tax, included or added",
+    "EGP, USD, EUR and AED",
+    "Four templates with custom colours",
+    "Multiple profiles and saved clients",
+    "One-page A4 PDF export",
+    "Works offline; data stays in the browser"
+  ],
+  "license": "https://opensource.org/licenses/MIT",
+  "codeRepository": "https://github.com/CodeNKoffee/hesabak",
+  "author": { "@type": "Person", "name": "Hatem Soliman", "url": "https://hatemsoliman.dev" }
+}
+</script>
 <style>
 /* Layout: tabbed editor on the left (Details, Design, Profiles, Saved), live A4 sheet on the right; the sheet is the print output. */
 :root{
@@ -234,6 +289,14 @@ table.st-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nu
 </style>
 </head>
 <body>
+<noscript>
+  <main style="max-width:640px;margin:48px auto;padding:0 16px;font:16px/1.5 system-ui,sans-serif">
+    <h1>Hesabak: a free invoice and receipt maker</h1>
+    <p>Hesabak makes professional invoices and receipts in your browser: day rates from hours or line items, VAT, advances, receipts with payment history, and one-page A4 PDFs. It is free, works offline, needs no account, and keeps your data on your own device.</p>
+    <p>Hesabak needs JavaScript to run. Turn it on and reload this page.</p>
+    <p><a href="https://github.com/CodeNKoffee/hesabak">Source code on GitHub</a> (MIT licence)</p>
+  </main>
+</noscript>
 
 <div class="bar">
   <div class="brand">hesabak<i>.</i> <span class="ar" lang="ar" dir="rtl">حسابك</span></div>

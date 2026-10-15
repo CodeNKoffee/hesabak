@@ -1,0 +1,9 @@
+flowchart LR
+  P["Profile: you, your brand, your layout"] --> I["Invoice: client, hours or items, tax"]
+  C["Saved client"] --> I
+  I -- "Save PDF" --> A["Invoice PDF"]
+  I -- "Make receipt" --> R["Receipt: payments, Paid in full"]
+  R -- "Save PDF" --> B["Receipt PDF"]
+  I -- "Save" --> H["Saved in this browser"]
+  R -- "Save" --> H
+  H -- "Export" --> J["JSON backup"]

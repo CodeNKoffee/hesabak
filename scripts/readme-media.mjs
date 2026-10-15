@@ -2,16 +2,18 @@
 // sample (Layla Mansour, Nile Bakery Co.), so the README never shows anyone's real data.
 //
 //   cd scripts && npm install && npm run media            # everything
-//   npm run media -- templates receipt                    # only some scenes
+//   npm run media -- templates receipt                    # only some scenes (templates, profile,
+//                                                        receipt, blocks, diagram, stills)
 //
 // Needs ffmpeg and gifsicle on PATH. Writes to docs/readme/.
-/* global document */
+/* global document, window */
 import { chromium } from "playwright";
 import { createServer } from "node:http";
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, statSync } from "node:fs";
 import { join, extname, dirname, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..");
@@ -146,6 +148,30 @@ if (want("blocks")) {
   }
   await r.snap(2.2);
   r.build(); await ctx.close();
+}
+
+if (want("diagram")) {
+  // Drawn here rather than as a mermaid block in the README: GitHub's mermaid viewer is an iframe that
+  // fails in some browsers and private repos ("Unable to render rich display"). A PNG always shows.
+  const MJS = process.env.MERMAID_JS || createRequire(import.meta.url).resolve("mermaid/dist/mermaid.min.js");
+  const src = readFileSync(join(HERE, "readme/billing.mmd"), "utf8");
+  const looks = {
+    light: { theme: "base", themeVariables: { fontFamily: "Helvetica, Arial, sans-serif", fontSize: "15px", primaryColor: "#ffffff", primaryBorderColor: "#141414", primaryTextColor: "#141414", lineColor: "#F26A1B", edgeLabelBackground: "#ffffff", tertiaryTextColor: "#141414" } },
+    dark:  { theme: "base", themeVariables: { fontFamily: "Helvetica, Arial, sans-serif", fontSize: "15px", primaryColor: "#161b22", primaryBorderColor: "#e6edf3", primaryTextColor: "#e6edf3", lineColor: "#F26A1B", edgeLabelBackground: "#0d1117", tertiaryTextColor: "#e6edf3" } }
+  };
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 400 }, deviceScaleFactor: 2 });
+  const page = await ctx.newPage();
+  for (const [name, cfg] of Object.entries(looks)) {
+    await page.setContent(`<body style="margin:0;padding:12px;background:${name === "dark" ? "#0d1117" : "#ffffff"}"><div id="d"></div></body>`);
+    await page.addScriptTag({ path: MJS });
+    await page.evaluate(async ({ src, cfg }) => {
+      window.mermaid.initialize({ startOnLoad: false, securityLevel: "strict", ...cfg });
+      document.getElementById("d").innerHTML = (await window.mermaid.render("billing", src)).svg;
+    }, { src, cfg });
+    await page.locator("#d").screenshot({ path: join(OUT, `diagram-${name}.png`) });
+  }
+  console.log("✓ diagram-light.png, diagram-dark.png");
+  await ctx.close();
 }
 
 if (want("stills") || want("banner")) {

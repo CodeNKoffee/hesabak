@@ -1,0 +1,6 @@
+# Hesabak is a single public page; everything else is the app's own files.
+User-agent: *
+Allow: /
+Disallow: /sw.js
+
+Sitemap: https://hesabak.hatemsoliman.dev/sitemap.xml

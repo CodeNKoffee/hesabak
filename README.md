@@ -74,6 +74,7 @@ page, bill your client, save the PDF.
 - [Project structure](#project-structure)
 - [Regenerating the README media](#regenerating-the-readme-media)
 - [Roadmap](#roadmap)
+- [Contributing](#contributing)
 - [Licence and credits](#licence-and-credits)
 
 </details>
@@ -117,16 +118,12 @@ And the receipt, in Standard and Studio:
 
 ## How billing works
 
-```mermaid
-flowchart LR
-  P["Profile<br/>you, your brand, your layout"] --> I["Invoice<br/>client, hours or items, tax, advance"]
-  C["Saved client"] --> I
-  I -->|Save PDF| PDF["One-page A4 PDF"]
-  I -->|Make receipt| R["Receipt<br/>payments, references, Paid in full"]
-  R -->|Save PDF| PDF2["Receipt PDF"]
-  I & R -->|Save| H["Saved list<br/>in this browser"]
-  H -->|Export| J["JSON backup"]
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/diagram-dark.png">
+  <img src="docs/readme/diagram-light.png" width="100%" alt="How billing works: a profile and a saved client feed an invoice. The invoice saves to a PDF or becomes a receipt, which also saves to a PDF. Both are kept in this browser and can be exported as a JSON backup.">
+</picture>
+
+<sub>Diagram source: <a href="scripts/readme/billing.mmd"><code>scripts/readme/billing.mmd</code></a>, drawn by <code>npm run media -- diagram</code>.</sub>
 
 A worked example with the day rate: **40 hours ÷ 7 hours per day = 5.71**, rounded down to **5.7 days**.
 At **EGP 2,000** a day that's **EGP 11,400**. Less an advance of **EGP 5,000**, the balance due is
@@ -162,6 +159,7 @@ One HTML file with inline CSS and JavaScript. No framework, no dependencies, no 
 | Offline | `sw.js`, network-first with a cache fallback |
 | Install | `manifest.webmanifest` and icons |
 | Security | `vercel.json`: strict CSP, `connect-src 'self'`, no referrer, no framing |
+| Search and sharing | `robots.txt`, `sitemap.xml`, Open Graph and Twitter cards, schema.org `WebApplication` data, `llms.txt`, and a `<noscript>` summary for crawlers |
 
 ## Run it locally
 
@@ -195,6 +193,9 @@ hesabak/
 ├── manifest.webmanifest    install metadata
 ├── icon.svg, icon-*.png    app icons
 ├── vercel.json             security headers
+├── robots.txt, sitemap.xml, llms.txt, og.png    search and sharing
+├── CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md
+├── .github/                issue and pull request templates
 ├── docs/readme/            banner, GIFs and screenshots for this README
 └── scripts/                README media recorder (not part of the app)
     ├── readme-media.mjs
@@ -211,7 +212,7 @@ cd scripts
 npm install
 npx playwright install chromium
 npm run media                 # everything
-npm run media -- receipt      # one scene: templates, profile, receipt, blocks, stills
+npm run media -- receipt      # one scene: templates, profile, receipt, blocks, diagram, stills
 ```
 
 ## Roadmap
@@ -221,6 +222,12 @@ npm run media -- receipt      # one scene: templates, profile, receipt, blocks, 
 - Recurring invoices and payment reminders
 - Optional encrypted sync between your own devices
 - More currencies and per-client tax defaults
+
+## Contributing
+
+Hesabak is open source under MIT: use it, fork it, build on it. Issues and pull requests are welcome.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) first; the short version is no trackers, no build step, one A4
+page, and fictional data only. Security reports go through [SECURITY.md](SECURITY.md).
 
 ## Licence and credits
 
