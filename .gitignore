@@ -2,4 +2,5 @@
 *.json.bak
 # personal exports never belong in the repo
 invoice-desk-*.json
+hesabak-*.json
 my-*.json

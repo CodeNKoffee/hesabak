@@ -1,5 +1,5 @@
-// Offline cache for Invoice Desk. Bump VERSION when you change any file.
-const VERSION = "invdesk-v3";
+// Offline cache for Hesabak. Bump VERSION when you change any file.
+const VERSION = "hesabak-v1";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener("activate", e => {

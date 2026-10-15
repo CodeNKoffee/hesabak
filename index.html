@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Invoice Desk</title>
-<meta name="description" content="Make invoices and receipts in your browser. Nothing leaves your device.">
+<title>Hesabak</title>
+<meta name="description" content="Hesabak: invoices and receipts made in your browser. Nothing leaves your device.">
 <meta name="theme-color" content="#141414">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -33,6 +33,7 @@ button,input,select,textarea{font:inherit;color:inherit}
   background:var(--app-panel);border-bottom:1px solid var(--app-line)}
 .brand{font-weight:700;letter-spacing:-.01em;font-size:15px}
 .brand i{font-style:normal;color:var(--accent)}
+.brand .ar{font-weight:500;color:var(--app-muted);margin-left:6px;font-size:14px}
 .actions{display:flex;flex-wrap:wrap;gap:6px}
 .btn{border:1px solid var(--app-line);background:var(--app-panel);border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap}
 .btn:hover{border-color:var(--app-muted)}
@@ -235,7 +236,7 @@ table.st-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nu
 <body>
 
 <div class="bar">
-  <div class="brand">Invoice Desk<i>.</i></div>
+  <div class="brand">hesabak<i>.</i> <span class="ar" lang="ar" dir="rtl">حسابك</span></div>
   <div class="actions">
     <button class="btn" id="bNew" type="button">New</button>
     <button class="btn" id="bDup" type="button">Duplicate</button>
@@ -429,7 +430,7 @@ table.st-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nu
 "use strict";
 
 /* ================= storage ================= */
-const KEY = "invdesk.v2";
+const KEY = "hesabak.v1";
 function load(){ try{ const v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; }catch(e){ return null; } }
 function persist(){ if(typeof doc!=='undefined') S.draft = doc; try{ localStorage.setItem(KEY, JSON.stringify(S)); return true; }catch(e){ return false; } }
 const clone = o => JSON.parse(JSON.stringify(o));
@@ -490,6 +491,7 @@ function sampleDoc(){
 
 /* ================= state ================= */
 let S = load();
+if(!S){ try{ const old = localStorage.getItem("invdesk.v2"); if(old){ S = JSON.parse(old); localStorage.setItem(KEY, old); } }catch(e){} } /* carry over data saved under the working name */
 if(!S){
   S = { profiles:{ sample:sampleProfile() }, active:"sample", clients:{}, docs:{}, draft:null, tab:"details" };
   /* carry over anything saved by the first version */
@@ -844,11 +846,11 @@ function applyTemplate(t){
   if(cur===was){ const on = Object.fromEntries(doc.design.blocks.map(b=>[b.id,b.on])); doc.design.blocks = orderFor(t).map(id=>({id,on:on[id]!==false})); drawBlocks(); }
   doc.design.template = t; drawTemplates(); changed(); say(`${TEMPLATES[t]} template applied.`); }
 $("tpls").addEventListener("click", e=>{ const b = e.target.closest("[data-tpl]"); if(b) applyTemplate(b.dataset.tpl); });
-$("tpls").addEventListener("dragstart", e=>{ const b = e.target.closest("[data-tpl]"); if(b){ e.dataTransfer.setData("application/x-invdesk-tpl", b.dataset.tpl); e.dataTransfer.effectAllowed = "copy"; } });
+$("tpls").addEventListener("dragstart", e=>{ const b = e.target.closest("[data-tpl]"); if(b){ e.dataTransfer.setData("application/x-hesabak-tpl", b.dataset.tpl); e.dataTransfer.effectAllowed = "copy"; } });
 const wrapEl = $("wrap");
-wrapEl.addEventListener("dragover", e=>{ if(e.dataTransfer.types.includes("application/x-invdesk-tpl")){ e.preventDefault(); wrapEl.classList.add("drop"); } });
+wrapEl.addEventListener("dragover", e=>{ if(e.dataTransfer.types.includes("application/x-hesabak-tpl")){ e.preventDefault(); wrapEl.classList.add("drop"); } });
 wrapEl.addEventListener("dragleave", ()=>wrapEl.classList.remove("drop"));
-wrapEl.addEventListener("drop", e=>{ const t = e.dataTransfer.getData("application/x-invdesk-tpl"); wrapEl.classList.remove("drop"); if(t){ e.preventDefault(); applyTemplate(t); } });
+wrapEl.addEventListener("drop", e=>{ const t = e.dataTransfer.getData("application/x-hesabak-tpl"); wrapEl.classList.remove("drop"); if(t){ e.preventDefault(); applyTemplate(t); } });
 
 /* ================= blocks (drag to reorder) ================= */
 function drawBlocks(){
@@ -989,7 +991,7 @@ $("hist").addEventListener("click", e=>{
 let wipeArmed = false;
 $("bWipe").onclick = ()=>{
   if(!wipeArmed){ wipeArmed = true; $("bWipe").textContent = "Yes, erase profiles, clients and invoices"; setTimeout(()=>{ wipeArmed=false; $("bWipe").textContent="Erase all data in this browser"; }, 5000); return; }
-  try{ localStorage.removeItem(KEY); localStorage.removeItem("invdesk.docs"); localStorage.removeItem("invdesk.profile"); localStorage.removeItem("invdesk.draft"); }catch(e){}
+  try{ localStorage.removeItem(KEY); localStorage.removeItem("invdesk.v2"); localStorage.removeItem("invdesk.docs"); localStorage.removeItem("invdesk.profile"); localStorage.removeItem("invdesk.draft"); }catch(e){}
   location.reload();
 };
 
@@ -1038,9 +1040,9 @@ window.addEventListener("afterprint", fit);
 
 /* ================= export / import ================= */
 $("bExport").onclick = ()=>{
-  const data = { app:"invoice-desk", version:2, profiles:S.profiles, active:S.active, clients:S.clients, docs:S.docs };
+  const data = { app:"hesabak", version:2, profiles:S.profiles, active:S.active, clients:S.clients, docs:S.docs };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `invoice-desk-${today()}.json`; a.click();
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `hesabak-${today()}.json`; a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href), 2000); say("Exported.");
 };
 $("bImport").onclick = ()=>$("fileIn").click();
@@ -1062,7 +1064,7 @@ $("fileIn").onchange = async e=>{
     else throw new Error("shape");
     persist(); fillForm(); changed({noMirror:true});
     say(`Imported ${f.name}.`);
-  }catch(err){ say("That file isn't an Invoice Desk export."); }
+  }catch(err){ say("That file isn't a Hesabak export."); }
   e.target.value = "";
 };
 

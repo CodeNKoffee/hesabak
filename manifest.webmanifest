@@ -1,6 +1,6 @@
 {
-  "name": "Invoice Desk",
-  "short_name": "Invoices",
+  "name": "Hesabak",
+  "short_name": "Hesabak",
   "description": "Invoices and receipts made in your browser. Nothing leaves your device.",
   "start_url": "./",
   "scope": "./",
