@@ -1,0 +1,1 @@
+[Open the app](https://hesabak.hatemsoliman.dev) · [Source](https://github.com/CodeNKoffee/hesabak) · [Report a bug](https://github.com/CodeNKoffee/hesabak/issues/new?template=bug_report.md) · [Changelog](https://github.com/CodeNKoffee/hesabak/blob/main/CHANGELOG.md) · MIT licence · Made by [Hatem Soliman](https://hatemsoliman.dev)

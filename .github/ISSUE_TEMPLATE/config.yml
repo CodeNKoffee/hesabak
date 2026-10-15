@@ -3,6 +3,9 @@ contact_links:
   - name: Open Hesabak
     url: https://hesabak.hatemsoliman.dev
     about: Try the app before reporting; most questions are answered by using it.
+  - name: Read the user guide
+    url: https://github.com/CodeNKoffee/hesabak/wiki
+    about: How-tos for profiles, templates, billing, receipts, PDFs and backups.
   - name: Report a security problem privately
     url: https://github.com/CodeNKoffee/hesabak/security/advisories/new
     about: Please don't post security problems in public issues.

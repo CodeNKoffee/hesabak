@@ -4,6 +4,7 @@
 |---|---|
 | Live app | [hesabak.hatemsoliman.dev](https://hesabak.hatemsoliman.dev) |
 | Repository | [github.com/CodeNKoffee/hesabak](https://github.com/CodeNKoffee/hesabak) |
+| User guide | [Wiki](https://github.com/CodeNKoffee/hesabak/wiki) |
 | Report a bug | [New bug report](https://github.com/CodeNKoffee/hesabak/issues/new?template=bug_report.md) |
 | Suggest a feature | [New feature request](https://github.com/CodeNKoffee/hesabak/issues/new?template=feature_request.md) |
 | Open issues | [Issues](https://github.com/CodeNKoffee/hesabak/issues) · [good first issues](https://github.com/CodeNKoffee/hesabak/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) |
@@ -27,6 +28,7 @@ or build something new from it. Contributions back are welcome too.
 
 - **Report a bug:** open an issue with the bug template. Include your browser and, if you can, an exported JSON with the personal parts replaced.
 - **Suggest a feature:** open an issue with the feature template and describe the invoice you're trying to make.
+- **Improve the guide:** the wiki's pages live in [`docs/wiki/`](docs/wiki), so fix or add a page with a normal pull request.
 - **Translate:** Arabic and right-to-left invoices are on the roadmap. Native speakers who can check wording are especially welcome.
 - **Add a template:** add its CSS under the existing templates in `index.html`, register it in `TEMPLATES`, and add a thumbnail in `thumb()`.
 

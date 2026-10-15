@@ -5,6 +5,9 @@ and versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- A user guide in the GitHub wiki, kept in `docs/wiki/` and published with `scripts/publish-wiki.sh`.
+
 ## [1.0.0] - 2026-10-16
 
 First public release.

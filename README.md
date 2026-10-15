@@ -9,7 +9,8 @@
   <a href="https://hesabak.hatemsoliman.dev"><b>Open the app</b></a> ·
   <a href="#run-it-locally">Run it locally</a> ·
   <a href="#deploy-your-own">Deploy your own</a> ·
-  <a href="#your-data">Your data</a>
+  <a href="#your-data">Your data</a> ·
+  <a href="https://github.com/CodeNKoffee/hesabak/wiki"><b>Wiki</b></a>
 </p>
 
 <p align="center">
@@ -198,6 +199,7 @@ hesabak/
 ├── CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md, CHANGELOG.md
 ├── .github/                issue and pull request templates
 ├── docs/readme/            banner, GIFs and screenshots for this README
+├── docs/wiki/              the GitHub wiki's pages (published by scripts/publish-wiki.sh)
 └── scripts/                README media recorder (not part of the app)
     ├── readme-media.mjs
     └── readme/             banner layout and its fonts (OFL)
@@ -227,7 +229,7 @@ npm run media -- receipt      # one scene: templates, profile, receipt, blocks, 
 ## Contributing
 
 Hesabak is open source under MIT: use it, fork it, build on it. Issues and pull requests are welcome.
-Read [CONTRIBUTING.md](CONTRIBUTING.md) first, and see [CHANGELOG.md](CHANGELOG.md) for what changed in each release; the short version is no trackers, no build step, one A4
+The [wiki](https://github.com/CodeNKoffee/hesabak/wiki) has a user guide. Read [CONTRIBUTING.md](CONTRIBUTING.md) first, and see [CHANGELOG.md](CHANGELOG.md) for what changed in each release; the short version is no trackers, no build step, one A4
 page, and fictional data only. Security reports go through [SECURITY.md](SECURITY.md).
 
 ## Licence and credits
