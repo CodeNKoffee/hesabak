@@ -1,5 +1,18 @@
 # Contributing to Hesabak
 
+| | |
+|---|---|
+| Live app | [hesabak.hatemsoliman.dev](https://hesabak.hatemsoliman.dev) |
+| Repository | [github.com/CodeNKoffee/hesabak](https://github.com/CodeNKoffee/hesabak) |
+| Report a bug | [New bug report](https://github.com/CodeNKoffee/hesabak/issues/new?template=bug_report.md) |
+| Suggest a feature | [New feature request](https://github.com/CodeNKoffee/hesabak/issues/new?template=feature_request.md) |
+| Open issues | [Issues](https://github.com/CodeNKoffee/hesabak/issues) · [good first issues](https://github.com/CodeNKoffee/hesabak/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) |
+| Pull requests | [Pull requests](https://github.com/CodeNKoffee/hesabak/pulls) |
+| Security problem | [Report privately](https://github.com/CodeNKoffee/hesabak/security/advisories/new), never in a public issue |
+| What changed | [CHANGELOG.md](CHANGELOG.md) · [Releases](https://github.com/CodeNKoffee/hesabak/releases) |
+| Licence | [MIT](LICENSE) |
+| Maintainer | [Hatem Soliman](https://hatemsoliman.dev) |
+
 Thanks for wanting to help. Hesabak is MIT-licensed: you can use it, fork it, sell services around it
 or build something new from it. Contributions back are welcome too.
 
@@ -19,12 +32,12 @@ or build something new from it. Contributions back are welcome too.
 
 ## Making a change
 
-1. Fork the repository and create a branch: `git checkout -b fix/receipt-spacing`.
+1. [Fork the repository](https://github.com/CodeNKoffee/hesabak/fork) and create a branch: `git checkout -b fix/receipt-spacing`.
 2. Serve the folder locally: `npx serve .`, then open the address it prints.
 3. Make your change. Check it in Chrome and Safari or Firefox, light and dark mode, and at phone width.
 4. Print to PDF in each template you touched and confirm it is still one page.
 5. If the change is visible, re-record the README media: `cd scripts && npm install && npm run media`.
-6. Bump `VERSION` in `sw.js` so installed copies update.
+6. Bump `VERSION` in `sw.js` so installed copies update, and add a line under **Unreleased** in [CHANGELOG.md](CHANGELOG.md).
 7. Open a pull request using the template, with a before and after screenshot.
 
 ## Style
@@ -38,3 +51,9 @@ or build something new from it. Contributions back are welcome too.
 
 Be kind and assume good faith. Harassment, discrimination or personal attacks aren't tolerated in
 issues, pull requests or anywhere else in the project. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## Versions and tags
+
+Hesabak uses [semantic versioning](https://semver.org): `MAJOR.MINOR.PATCH`. Each release is an
+annotated git tag (`v1.0.0`) with a matching section in [CHANGELOG.md](CHANGELOG.md) and a
+[GitHub release](https://github.com/CodeNKoffee/hesabak/releases). Maintainers cut releases; contributors only add to **Unreleased**.

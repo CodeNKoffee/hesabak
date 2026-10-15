@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Open Hesabak
+    url: https://hesabak.hatemsoliman.dev
+    about: Try the app before reporting; most questions are answered by using it.
+  - name: Report a security problem privately
+    url: https://github.com/CodeNKoffee/hesabak/security/advisories/new
+    about: Please don't post security problems in public issues.
+  - name: Contributing guide
+    url: https://github.com/CodeNKoffee/hesabak/blob/main/CONTRIBUTING.md
+    about: How to set up, what we accept, and how releases work.

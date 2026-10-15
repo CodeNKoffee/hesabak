@@ -19,6 +19,7 @@
   <img alt="Dependencies: zero" src="https://img.shields.io/badge/dependencies-0-2ea44f">
   <img alt="Currencies EGP, USD, EUR, AED" src="https://img.shields.io/badge/currencies-EGP%20%C2%B7%20USD%20%C2%B7%20EUR%20%C2%B7%20AED-6B6B6B">
   <img alt="Hosted on Vercel" src="https://img.shields.io/badge/hosted%20on-Vercel-000000?logo=vercel&logoColor=white">
+  <a href="CHANGELOG.md"><img alt="Version 1.0.0" src="https://img.shields.io/badge/version-1.0.0-141414"></a>
   <img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-2ea44f">
 </p>
 
@@ -194,7 +195,7 @@ hesabak/
 ├── icon.svg, icon-*.png    app icons
 ├── vercel.json             security headers
 ├── robots.txt, sitemap.xml, llms.txt, og.png    search and sharing
-├── CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md
+├── CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md, CHANGELOG.md
 ├── .github/                issue and pull request templates
 ├── docs/readme/            banner, GIFs and screenshots for this README
 └── scripts/                README media recorder (not part of the app)
@@ -226,7 +227,7 @@ npm run media -- receipt      # one scene: templates, profile, receipt, blocks, 
 ## Contributing
 
 Hesabak is open source under MIT: use it, fork it, build on it. Issues and pull requests are welcome.
-Read [CONTRIBUTING.md](CONTRIBUTING.md) first; the short version is no trackers, no build step, one A4
+Read [CONTRIBUTING.md](CONTRIBUTING.md) first, and see [CHANGELOG.md](CHANGELOG.md) for what changed in each release; the short version is no trackers, no build step, one A4
 page, and fictional data only. Security reports go through [SECURITY.md](SECURITY.md).
 
 ## Licence and credits
