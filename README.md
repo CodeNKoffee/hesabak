@@ -6,7 +6,7 @@
 </a>
 
 <p align="center">
-  <a href="https://hesabak.hatemsoliman.dev"><b>Open the app</b></a> ·
+  <a href="https://hesabak.hatemsoliman.dev/app/"><b>Open the app</b></a> ·
   <a href="#run-it-locally">Run it locally</a> ·
   <a href="#deploy-your-own">Deploy your own</a> ·
   <a href="#your-data">Your data</a> ·
@@ -152,11 +152,12 @@ profile. No real person's data is in this repository, and personal exports are g
 
 ## How it's built
 
-One HTML file with inline CSS and JavaScript. No framework, no dependencies, no build step.
+The app is one HTML file with inline CSS and JavaScript. No framework, no dependencies, no build step.
 
 | Piece | How |
 |---|---|
-| Page | `index.html`: editor, live A4 sheet, all logic |
+| Landing | `index.html`: one screen, no scrolling, with a button into the app |
+| App | `app/index.html`: editor, live A4 sheet, all logic |
 | Print | CSS `@page { size: A4; margin: 0 }`, so the browser's own PDF engine draws exactly what you see |
 | Storage | `localStorage`, one key, versioned, with migration from older formats |
 | Offline | `sw.js`, network-first with a cache fallback |
@@ -175,8 +176,8 @@ cd hesabak
 npx serve .
 ```
 
-Then open the address it prints. Opening `index.html` directly also works, but install and offline
-need a real `http://` address.
+Then open the address it prints: the landing page is at `/` and the app at `/app/`. Opening the
+files directly also works, but install and offline need a real `http://` address.
 
 ## Deploy your own
 
@@ -192,7 +193,9 @@ When you change any file, bump `VERSION` in `sw.js` so installed copies fetch th
 
 ```
 hesabak/
-├── index.html              the whole app
+├── index.html              landing page (one screen)
+├── app/index.html          the whole app
+├── landing/                landing page sheets and fonts
 ├── sw.js                   offline cache
 ├── manifest.webmanifest    install metadata
 ├── icon.svg, icon-*.png    app icons

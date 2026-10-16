@@ -15,6 +15,9 @@
 
 ## Links
 
-- App: https://hesabak.hatemsoliman.dev/
+- Home: https://hesabak.hatemsoliman.dev/
+- App (opens straight into the editor): https://hesabak.hatemsoliman.dev/app/
+- User guide: https://github.com/CodeNKoffee/hesabak/wiki
+- Also reachable at invoicedesk.hatemsoliman.dev, which redirects here
 - Source: https://github.com/CodeNKoffee/hesabak
 - Author: https://hatemsoliman.dev

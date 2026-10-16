@@ -2,7 +2,7 @@
   "name": "Hesabak",
   "short_name": "Hesabak",
   "description": "Invoices and receipts made in your browser. Nothing leaves your device.",
-  "start_url": "./",
+  "start_url": "./app/",
   "scope": "./",
   "display": "standalone",
   "background_color": "#EFEEEC",
@@ -26,7 +26,7 @@
       "type": "image/png"
     }
   ],
-  "id": "/",
+  "id": "/app/",
   "lang": "en",
   "categories": [
     "business",

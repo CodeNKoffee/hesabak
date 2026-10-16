@@ -10,7 +10,7 @@ cd hesabak
 npx serve .
 ```
 
-Open the address it prints. Opening `index.html` directly also works, but installing and offline use need a real `http://` address.
+Open the address it prints. The landing page is at `/` and the app at `/app/`. Opening the files directly also works, but installing and offline use need a real `http://` address.
 
 ## Deploy for free
 

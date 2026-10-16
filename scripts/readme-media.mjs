@@ -26,12 +26,12 @@ mkdirSync(OUT, { recursive: true }); rmSync(TMP, { recursive: true, force: true 
 const TYPES = { ".html":"text/html", ".js":"text/javascript", ".svg":"image/svg+xml", ".png":"image/png", ".webmanifest":"application/manifest+json", ".woff2":"font/woff2", ".json":"application/json" };
 const server = createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
-  if (p === "/") p = "/index.html";
+  if (p.endsWith("/")) p += "index.html";
   const f = join(ROOT, p);
   if (!f.startsWith(ROOT) || !existsSync(f) || statSync(f).isDirectory()) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { "content-type": TYPES[extname(f)] || "application/octet-stream" }); res.end(readFileSync(f));
 }).listen(0);
-const URL_ = `http://127.0.0.1:${server.address().port}/`;
+const URL_ = `http://127.0.0.1:${server.address().port}/app/`;
 
 const ARABIC = readFileSync(join(HERE, "readme/fonts/noto-sans-arabic-arabic-600-normal.woff2")).toString("base64");
 const browser = await chromium.launch();

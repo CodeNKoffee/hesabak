@@ -1,0 +1,11 @@
+/* TEAM */
+Maker: Hatem Soliman
+Site: https://hatemsoliman.dev
+Location: Cairo, Egypt
+
+/* PROJECT */
+Name: Hesabak (حسابك)
+Source: https://github.com/CodeNKoffee/hesabak
+Licence: MIT
+Stack: plain HTML, CSS and JavaScript. No framework, no build, no server.
+Fonts: Geist, JetBrains Mono, Noto Sans Arabic (SIL Open Font Licence)

@@ -6,6 +6,8 @@ and versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
+- A one-screen landing page at `/` (faded sheets from the app's own output, one button into the app). The app now lives at `/app/`; the installed app opens there directly.
+- `humans.txt`, `.well-known/security.txt`, a sitemap entry for the app, and a redirect from `invoicedesk.hatemsoliman.dev`.
 - Automated checks in GitHub Actions (`scripts/smoke.mjs`), replacing the Datadog Synthetics workflow, which needed a Datadog account.
 - A user guide in the GitHub wiki, kept in `docs/wiki/` and published with `scripts/publish-wiki.sh`.
 

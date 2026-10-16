@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hesabak app · Make an invoice or receipt</title>
+<meta name="description" content="Make professional invoices and receipts in your browser. Day rates from hours, line items, VAT, payment history and one-page A4 PDFs. Free, offline, no account, and nothing leaves your device.">
+<meta name="application-name" content="Hesabak">
+<meta name="apple-mobile-web-app-title" content="Hesabak">
+<meta name="author" content="Hatem Soliman">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#141414">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://hesabak.hatemsoliman.dev/app/">
+<link rel="alternate" hreflang="en" href="https://hesabak.hatemsoliman.dev/app/">
+<link rel="alternate" hreflang="x-default" href="https://hesabak.hatemsoliman.dev/app/">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="icon" href="../icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<!-- Sharing previews -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hesabak">
+<meta property="og:title" content="Hesabak · Free invoice and receipt maker">
+<meta property="og:description" content="Invoices and receipts made in your browser. Four templates, receipts with payment history, VAT, A4 PDFs. Free, offline, no account.">
+<meta property="og:url" content="https://hesabak.hatemsoliman.dev/app/">
+<meta property="og:image" content="https://hesabak.hatemsoliman.dev/og.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Hesabak: three printed invoices and receipts beside the headline Bill like a studio, keep it all on your machine.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hesabak · Free invoice and receipt maker">
+<meta name="twitter:description" content="Invoices and receipts made in your browser. Free, offline, no account.">
+<meta name="twitter:image" content="https://hesabak.hatemsoliman.dev/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Hesabak",
+  "alternateName": "حسابك",
+  "url": "https://hesabak.hatemsoliman.dev/app/",
+  "image": "https://hesabak.hatemsoliman.dev/og.png",
+  "description": "A free invoice and receipt maker that runs in the browser. Profiles, four templates, day rates from hours or line items, VAT, receipts with payment history and one-page A4 PDFs. No account, works offline, and data never leaves the device.",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "Invoicing",
+  "operatingSystem": "Any (web browser)",
+  "browserRequirements": "Requires JavaScript. Works offline once opened.",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": [
+    "Invoices and receipts with payment history",
+    "Day rate from hours, or line items",
+    "Egypt VAT 14% or a custom tax, included or added",
+    "EGP, USD, EUR and AED",
+    "Four templates with custom colours",
+    "Multiple profiles and saved clients",
+    "One-page A4 PDF export",
+    "Works offline; data stays in the browser"
+  ],
+  "license": "https://opensource.org/licenses/MIT",
+  "codeRepository": "https://github.com/CodeNKoffee/hesabak",
+  "author": { "@type": "Person", "name": "Hatem Soliman", "url": "https://hatemsoliman.dev" }
+}
+</script>
+<style>
+/* Layout: tabbed editor on the left (Details, Design, Profiles, Saved), live A4 sheet on the right; the sheet is the print output. */
+:root{
+  --ink:#141414; --paper:#ffffff; --box:#F7F7F7; --line:#E3E3E3; --muted:#6B6B6B; --accent:#F26A1B;
+  --app-bg:#EFEEEC; --app-panel:#ffffff; --app-fg:#141414; --app-muted:#6B6B6B; --app-line:#E3E3E3; --app-field:#F7F7F7; --app-hover:#EBEBEB;
+  --danger:#C2341B; --note-bg:#FFF6E5; --note-fg:#6B4A00; --btn-bg:#141414; --btn-fg:#ffffff;
+  --sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --app-bg:#0E0E0E; --app-panel:#181818; --app-fg:#EDEDED; --app-muted:#9A9A9A; --app-line:#2A2A2A; --app-field:#202020; --app-hover:#262626; --danger:#FF7A5C; --note-bg:#2A2414; --note-fg:#F2D9A0; --btn-bg:#ffffff; --btn-fg:#141414; color-scheme:dark } }
+:root[data-theme="dark"]{ --app-bg:#0E0E0E; --app-panel:#181818; --app-fg:#EDEDED; --app-muted:#9A9A9A; --app-line:#2A2A2A; --app-field:#202020; --app-hover:#262626; --danger:#FF7A5C; --note-bg:#2A2414; --note-fg:#F2D9A0; --btn-bg:#ffffff; --btn-fg:#141414; color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--app-bg);color:var(--app-fg);font:14px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+
+/* ---------- top bar ---------- */
+.bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;
+  padding:10px max(16px, env(safe-area-inset-right,0px)) 10px max(16px, env(safe-area-inset-left,0px));
+  background:var(--app-panel);border-bottom:1px solid var(--app-line)}
+.brand{font-weight:700;letter-spacing:-.01em;font-size:15px}
+.brand i{font-style:normal;color:var(--accent)}
+.brand .ar{font-weight:500;color:var(--app-muted);margin-left:6px;font-size:14px}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+.btn{border:1px solid var(--app-line);background:var(--app-panel);border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--app-muted)}
+.btn:focus-visible,.field:focus-visible,.seg button:focus-visible,.tab:focus-visible,.tpl:focus-visible,.chip:focus-visible,.blk:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn.primary{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.btn.small{padding:4px 9px;font-size:12px}
+.btn.danger{color:var(--danger)}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:minmax(320px,430px) minmax(0,1fr);min-height:calc(100% - 56px)}
+.editor{background:var(--app-panel);border-right:1px solid var(--app-line);display:flex;flex-direction:column;max-height:calc(100vh - 56px);position:sticky;top:56px}
+.tabs{display:flex;border-bottom:1px solid var(--app-line);padding:0 8px 0 max(8px, env(safe-area-inset-left,0px))}
+.tab{flex:1;border:0;background:none;padding:11px 4px 10px;cursor:pointer;color:var(--app-muted);font-weight:600;font-size:13px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--app-fg);border-bottom-color:var(--app-fg)}
+.panel{overflow:auto;padding:4px 16px 40px max(16px, env(safe-area-inset-left,0px));flex:1}
+.stage{padding:24px max(16px, env(safe-area-inset-right,0px)) 48px 24px;min-width:0}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .editor{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--app-line)}
+  .panel{padding-right:max(16px, env(safe-area-inset-right,0px));max-height:70vh}
+  .stage{padding-left:max(16px, env(safe-area-inset-left,0px))}
+}
+
+/* ---------- form ---------- */
+details.sec{border-bottom:1px solid var(--app-line);padding:10px 0}
+details.sec>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:13px;padding:4px 0}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"+";color:var(--app-muted);font-weight:400}
+details.sec[open]>summary::after{content:"–"}
+.h3{font-weight:600;font-size:13px;margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:8px}
+.grid .full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--app-muted);min-width:0}
+.field{width:100%;background:var(--app-field);border:1px solid var(--app-line);border-radius:7px;padding:7px 9px;font-size:13.5px;color:var(--app-fg);min-width:0}
+textarea.field{resize:vertical;min-height:54px}
+input[type="color"].field{padding:2px;height:34px}
+.mono{font-family:var(--mono);font-size:12.5px}
+.row{display:flex;gap:6px;align-items:end}
+.row>*{min-width:0}
+.row .field{flex:1}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--app-fg)}
+.seg{display:inline-flex;border:1px solid var(--app-line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:6px 12px;cursor:pointer;color:var(--app-muted)}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--btn-fg)}
+.hint{font-size:11.5px;color:var(--app-muted);margin:6px 0 0}
+.itemrow{display:grid;grid-template-columns:1fr 64px 96px 28px;gap:6px;margin-top:6px;align-items:center}
+.payrow{display:grid;grid-template-columns:118px 1fr 90px 28px;gap:6px;margin-top:6px}
+.payrow .ref{grid-column:1/4}
+.x{border:0;background:transparent;color:var(--app-muted);cursor:pointer;font-size:16px;padding:0 4px}
+.x:hover{color:var(--danger)}
+.status{font-size:12px;color:var(--app-muted);min-height:18px;margin:8px 0 0}
+.banner{margin:12px 0 4px;padding:10px 12px;border-radius:8px;background:var(--note-bg);color:var(--note-fg);font-size:12.5px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.banner .btn{background:transparent;border-color:currentColor;color:inherit}
+
+/* placeholders */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.chip{border:1px dashed var(--app-muted);background:var(--app-field);color:var(--app-fg);border-radius:999px;padding:2px 9px;font:12px var(--mono);cursor:grab}
+.chip:active{cursor:grabbing}
+
+/* lists: profiles, clients, saved, blocks */
+.list{display:flex;flex-direction:column;gap:4px}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;background:var(--app-field);font-size:12.5px;border:1px solid transparent}
+.li.on{border-color:var(--app-fg)}
+.li .go{flex:1;min-width:0;cursor:pointer;background:none;border:0;text-align:left;padding:0;display:flex;gap:8px;align-items:baseline;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.li b{font-weight:600}
+.li .go b.mono{font-family:var(--mono)}
+.li small{color:var(--app-muted);overflow:hidden;text-overflow:ellipsis}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;align-self:center;border:1px solid rgba(0,0,0,.12)}
+.tag{font-size:10.5px;padding:1px 6px;border-radius:999px;background:var(--app-hover);color:var(--app-muted)}
+
+/* templates */
+.tpls{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tpl{border:1px solid var(--app-line);background:var(--app-field);border-radius:9px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:stretch;text-align:left}
+.tpl[aria-pressed="true"]{border-color:var(--app-fg);box-shadow:0 0 0 1px var(--app-fg)}
+.tpl span{font-size:12px;font-weight:600;padding:0 2px}
+.thumb{aspect-ratio:210/297;max-width:100%;background:#fff;border-radius:4px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.thumb i{position:absolute;display:block;border-radius:1px}
+
+/* blocks */
+.blk{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;background:var(--app-field);border:1px solid var(--app-line);font-size:13px;cursor:grab;user-select:none}
+.blk.dragging{opacity:.4}
+.blk.over-top{box-shadow:0 -2px 0 var(--accent)}
+.blk.over-bot{box-shadow:0 2px 0 var(--accent)}
+.blk .grip{color:var(--app-muted);font-size:14px;line-height:1;letter-spacing:-2px}
+.blk .nm{flex:1}
+.blk.off .nm{color:var(--app-muted);text-decoration:line-through}
+.blk .mv{border:0;background:none;color:var(--app-muted);cursor:pointer;padding:0 3px;font-size:13px}
+.blk .mv:hover{color:var(--app-fg)}
+
+/* ---------- the sheet (A4 paper, always light) ---------- */
+.sheetwrap{position:relative;margin:0 auto;max-width:794px;border-radius:2px}
+.sheetwrap.drop{outline:2px dashed var(--accent);outline-offset:6px}
+.sheet{width:210mm;height:297mm;background:var(--paper);color:var(--ink);transform-origin:top left;box-shadow:0 1px 3px rgba(0,0,0,.08),0 12px 40px rgba(0,0,0,.08);
+  padding:16.5mm 18mm 13mm;display:flex;flex-direction:column;font-family:var(--sans);font-size:10.5pt;line-height:1.4;position:absolute;left:0;top:0;overflow:hidden;
+  --accent-tint:color-mix(in srgb, var(--accent) 8%, #fff); --accent-line:color-mix(in srgb, var(--accent) 38%, #fff)}
+.s-hd{display:flex;justify-content:space-between;gap:12mm;padding-bottom:8mm;border-bottom:1px solid var(--line)}
+.s-wm{font-size:20pt;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.s-wm span{color:var(--accent)}
+.s-tag{color:var(--muted);font-size:9.5pt;margin-top:.5mm}
+.s-meta{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:0;min-width:0;max-width:95mm}
+.s-lbl{line-height:1.2;font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.s-no{font-weight:700;font-size:11pt;margin-bottom:1.6mm}
+.s-pairs{display:grid;grid-template-columns:max-content max-content;column-gap:3.5mm;row-gap:1.4mm;align-items:baseline;margin-bottom:2.6mm}
+.s-pairs b{font-size:11pt;text-align:right}
+.s-paytbl td{vertical-align:baseline}
+.s-paytbl th:nth-child(2),.s-paytbl th:nth-child(3){padding-left:4mm}
+.s-paytbl td:nth-child(2),.s-paytbl td:nth-child(3){padding-left:4mm;white-space:nowrap}
+.s-ref{font-family:var(--mono);font-size:.84em}
+.s-seal{font-family:var(--mono);font-size:7.6pt;line-height:1.45;white-space:nowrap;background:var(--accent-tint);border:1px solid var(--accent-line);border-radius:4px;padding:1.6mm 2.4mm;text-align:left;color:var(--ink)}
+.s-titleblk{margin-top:7.4mm}
+.s-title{font-size:26pt;font-weight:700;letter-spacing:-.02em;margin:0 0 1mm;line-height:1.1}
+.s-sub{color:var(--muted);font-size:10.5pt}
+.s-parties{display:grid;grid-template-columns:1fr 1fr;gap:10mm;margin:8.1mm 0 8.1mm}
+.s-plbl{font-size:8pt;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.2mm}
+.s-parties b{display:block}
+.s-parties div div{white-space:pre-line}
+table.s-items{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.s-items th{font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:0 0 1.2mm;border-bottom:1px solid var(--ink)}
+.s-items th:last-child,.s-items td:last-child{text-align:right;white-space:nowrap;padding-left:6mm}
+.s-items td{padding:1.88mm 0;border-bottom:1px solid var(--line);vertical-align:top}
+.s-items tr.sub td{color:var(--muted)}
+.s-items tr.due td,.s-items tr.paid td{border-bottom:0;padding-top:2.4mm;font-weight:700;font-size:13pt}
+.s-items tr.due td:last-child,.s-items tr.paid td:last-child{color:var(--accent)}
+.s-hist{margin-top:7mm}
+.s-h2{font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 2mm}
+.s-boxes{display:flex;flex-direction:column;gap:2.1mm;margin-top:5.4mm}
+.s-box{background:var(--box);border-radius:5px;padding:3mm 3.5mm;font-size:9.5pt;white-space:pre-line}
+.s-box b{font-weight:700}
+.s-ft{margin-top:auto;display:flex;justify-content:space-between;gap:8mm;padding-top:4mm;border-top:1px solid var(--line);color:var(--muted);font-size:8.5pt}
+.s-stamp{display:inline-block;margin-left:3mm;padding:.6mm 2.4mm;border:1px solid var(--accent);color:var(--accent);border-radius:999px;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;vertical-align:middle;font-weight:700}
+.s-blk>.s-hd,.s-blk{min-width:0}
+
+/* template: Standard (billing-statement layout: title and meta left, logo right, totals block, page footer) */
+.t-standard{padding:15mm 16mm 12mm;font-size:9.8pt}
+.st-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10mm}
+.st-h1{font-size:23pt;font-weight:700;letter-spacing:-.015em;line-height:1.1;margin:0}
+.st-logo{text-align:right}
+.st-logo .s-wm{font-size:15pt}
+.st-meta{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:4mm;row-gap:.9mm;margin-top:5.5mm;align-items:baseline}
+.st-meta dt{font-weight:700;margin:0}
+.st-meta dd{margin:0;font-weight:600}
+.st-meta .s-seal{display:inline-block;font-weight:400;margin-top:.4mm}
+.st-parties{display:grid;grid-template-columns:1fr 1fr;gap:10mm;margin-top:9mm}
+.st-parties b{display:block;margin-bottom:.8mm}
+.st-parties div div{white-space:pre-line;line-height:1.5}
+.st-head{margin-top:9mm}
+.st-amount{font-size:15.5pt;font-weight:700;letter-spacing:-.01em}
+.st-amount .s-stamp{font-size:7pt}
+.st-sub{color:var(--muted);margin-top:.8mm}
+.st-pay{display:inline-block;margin-top:2mm;color:var(--accent);text-decoration:underline;text-underline-offset:2px;font-weight:600}
+table.st-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin-top:9mm}
+.st-tbl th{font-size:8.2pt;font-weight:500;color:var(--muted);text-align:right;padding:0 0 1.6mm 4mm;border-bottom:1px solid var(--ink);white-space:nowrap}
+.st-tbl td{text-align:right;padding:2.2mm 0 2.2mm 4mm;vertical-align:baseline;white-space:nowrap}
+.st-tbl th:first-child,.st-tbl td:first-child{text-align:left;padding-left:0;white-space:normal}
+.st-tbl td small{display:block;color:var(--muted);font-size:.9em;margin-top:.5mm}
+.st-totals{margin:3mm 0 0 auto;width:56%;display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+.st-totals div{display:flex;justify-content:space-between;gap:6mm;padding:1.5mm 0;border-top:1px solid var(--line)}
+.st-totals .strong{font-weight:700}
+.st-totals .strong span:last-child{color:var(--accent)}
+.st-totals .muted{color:var(--muted)}
+.st-h2{font-size:15.5pt;font-weight:700;letter-spacing:-.01em;margin-top:10mm}
+.st-h2 + table.st-tbl{margin-top:4mm}
+.t-standard .s-boxes{margin-top:8mm}
+.t-standard .s-ft{border-top:1px solid var(--line)}
+
+/* template: Ledger (accountant-style, monospace figures, ruled) */
+.t-ledger .s-hd{border-bottom:2px solid var(--ink)}
+.t-ledger .s-title{font-size:12pt;text-transform:uppercase;letter-spacing:.24em}
+.t-ledger .s-titleblk{margin-top:9mm}
+.t-ledger .s-plbl{color:var(--ink)}
+.t-ledger .s-items td:last-child{font-family:var(--mono);font-size:.92em}
+.t-ledger .s-items tr.due td,.t-ledger .s-items tr.paid td{border-top:2px solid var(--ink)}
+.t-ledger .s-box{background:transparent;border:1px solid var(--line);border-radius:0}
+.t-ledger .s-seal{border-radius:0}
+.t-ledger .s-ft{border-top:2px solid var(--ink)}
+/* template: Bold (dark masthead, big title) */
+.t-bold .s-hd{background:var(--ink);color:#fff;margin:0 -18mm;padding:12mm 18mm 9mm;border:0}
+.t-bold .s-blk.first .s-hd{margin-top:-17mm;padding-top:15mm}
+.t-bold .s-tag,.t-bold .s-lbl{color:#B5B5B5}
+.t-bold .s-pairs b{color:#fff}
+.t-bold .s-seal{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28);color:#fff}
+.t-bold .s-title{font-size:36pt;letter-spacing:-.03em}
+.t-bold .s-titleblk{margin-top:10mm}
+.t-bold .s-items tr.due td,.t-bold .s-items tr.paid td{font-size:15pt}
+.t-bold .s-box{background:var(--accent-tint)}
+
+@page{size:A4;margin:0}
+@media print{
+  html,body{background:#fff;height:auto}
+  .bar,.editor,#fitWarn{display:none!important}
+  .app{display:block}
+  .stage{padding:0}
+  .sheetwrap{max-width:none;height:auto!important;outline:0}
+  .sheet{position:static;transform:none!important;box-shadow:none}
+  .sheet,.sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media (prefers-reduced-motion:no-preference){ .btn,.field,.blk{transition:border-color .15s, box-shadow .15s} }
+</style>
+</head>
+<body>
+<noscript>
+  <main style="max-width:640px;margin:48px auto;padding:0 16px;font:16px/1.5 system-ui,sans-serif">
+    <h1>Hesabak: a free invoice and receipt maker</h1>
+    <p>Hesabak makes professional invoices and receipts in your browser: day rates from hours or line items, VAT, advances, receipts with payment history, and one-page A4 PDFs. It is free, works offline, needs no account, and keeps your data on your own device.</p>
+    <p>Hesabak needs JavaScript to run. Turn it on and reload this page.</p>
+    <p><a href="https://github.com/CodeNKoffee/hesabak">Source code on GitHub</a> (MIT licence)</p>
+  </main>
+</noscript>
+
+<div class="bar">
+  <a class="brand" href="../" aria-label="Hesabak home" style="color:inherit;text-decoration:none">hesabak<i>.</i> <span class="ar" lang="ar" dir="rtl">حسابك</span></a>
+  <div class="actions">
+    <button class="btn" id="bNew" type="button">New</button>
+    <button class="btn" id="bDup" type="button">Duplicate</button>
+    <button class="btn" id="bReceipt" type="button">Make receipt</button>
+    <button class="btn" id="bSave" type="button">Save</button>
+    <button class="btn primary" id="bPdf" type="button">Save PDF</button>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="editor">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" type="button" data-tab="details">Details</button>
+      <button class="tab" role="tab" type="button" data-tab="design">Design</button>
+      <button class="tab" role="tab" type="button" data-tab="profiles">Profiles</button>
+      <button class="tab" role="tab" type="button" data-tab="saved">Saved</button>
+    </div>
+
+    <form class="panel" id="ed" autocomplete="off">
+
+      <!-- ===== DETAILS ===== -->
+      <div data-pane="details">
+        <div class="banner" id="sampleBanner" hidden>
+          <span>You're looking at sample data. Add your own details once and they'll fill every invoice.</span>
+          <button class="btn small" type="button" id="bMakeMine">Set up my profile</button>
+        </div>
+
+        <details class="sec" open><summary>Document</summary>
+          <div class="grid">
+            <div class="full"><div class="seg" role="group" aria-label="Document type">
+              <button type="button" data-kind="invoice">Invoice</button><button type="button" data-kind="receipt">Receipt</button></div></div>
+            <label class="f full">Bill as (your profile)<select class="field" id="profilePick"></select></label>
+            <label class="f">Client code<input class="field mono" id="clientCode" data-k="clientCode" placeholder="ACME"></label>
+            <label class="f">Invoice number
+              <span class="row"><input class="field mono" id="number" data-k="number"><button class="btn small" type="button" id="bSuggest" title="Next free number for this client and year">Next</button></span></label>
+            <label class="f" data-receipt>Receipt number<input class="field mono" id="receiptNo" data-k="receiptNo"></label>
+            <label class="f">Date<input class="field" type="date" id="date" data-k="date"></label>
+            <label class="f" data-invoice>Due date (optional)<input class="field" type="date" id="due" data-k="due"></label>
+            <label class="f">Currency<select class="field" id="currency" data-k="currency"><option>EGP</option><option>USD</option><option>EUR</option><option>AED</option></select></label>
+            <label class="f full">Project<input class="field" id="project" data-k="project" placeholder="Website redesign, phase 1"></label>
+          </div>
+        </details>
+
+        <details class="sec" open><summary>To (client)</summary>
+          <div class="grid">
+            <label class="f full">Saved client
+              <span class="row"><select class="field" id="clientPick"></select><button class="btn small" type="button" id="bSaveClient">Save client</button></span></label>
+            <label class="f">Company or name<input class="field" id="tName" data-k="to.name"></label>
+            <label class="f">Attention<input class="field" id="tAttn" data-k="to.attn" placeholder="Attn: …"></label>
+            <label class="f full">Address and contact (one per line)<textarea class="field" id="tLines" data-k="to.lines" rows="2"></textarea></label>
+          </div>
+        </details>
+
+        <details class="sec" open><summary>Billing</summary>
+          <div class="grid">
+            <div class="full"><div class="seg" role="group" aria-label="Billing mode">
+              <button type="button" data-mode="hours">Day rate from hours</button><button type="button" data-mode="items">Line items</button></div></div>
+          </div>
+          <div class="grid" data-mode-pane="hours">
+            <label class="f">Hours worked<input class="field" type="number" min="0" step="0.25" id="hWorked" data-k="hours.worked" data-num></label>
+            <label class="f">Hours per day<input class="field" type="number" min="1" step="0.5" id="hPerDay" data-k="hours.perDay" data-num></label>
+            <label class="f">Day rate<input class="field" type="number" min="0" step="1" id="hRate" data-k="hours.rate" data-num></label>
+            <label class="f">Days (rounded down)<input class="field" id="hDays" readonly tabindex="-1"></label>
+            <label class="f full">Time record<input class="field" id="hRecord" data-k="hours.record" placeholder="Toggl export, 1–12 March"></label>
+          </div>
+          <div data-mode-pane="items">
+            <div id="items"></div>
+            <button class="btn small" type="button" id="bAddItem" style="margin-top:8px">Add item</button>
+            <p class="hint">Description · qty · unit price</p>
+          </div>
+        </details>
+
+        <details class="sec"><summary>Tax</summary>
+          <div class="grid">
+            <label class="f">Tax<select class="field" id="taxMode" data-k="tax.mode">
+              <option value="none">No tax</option><option value="eg">Egypt VAT 14%</option><option value="custom">Custom</option></select></label>
+            <label class="f" data-tax-custom>Rate %<input class="field" type="number" min="0" step="0.1" id="taxRate" data-k="tax.rate" data-num></label>
+            <label class="f full" data-tax-custom>Label<input class="field" id="taxLabel" data-k="tax.label" placeholder="VAT"></label>
+            <label class="check full" data-tax-on><input type="checkbox" id="taxIncl" data-k="tax.inclusive"> Prices already include tax</label>
+          </div>
+        </details>
+
+        <details class="sec" open><summary>Payments</summary>
+          <div class="grid" data-invoice>
+            <label class="f">Advance already received<input class="field" type="number" min="0" step="1" id="advance" data-k="advance" data-num></label>
+          </div>
+          <div data-receipt>
+            <div id="pays"></div>
+            <button class="btn small" type="button" id="bAddPay" style="margin-top:8px">Add payment</button>
+            <p class="hint">Date · method · amount, then an optional reference</p>
+          </div>
+        </details>
+
+        <details class="sec"><summary>Delivery receipt</summary>
+          <div class="grid">
+            <label class="f full">Receipt number or SHA-256 seal (optional)<input class="field mono" id="seal" data-k="seal" placeholder="64-character hash"></label>
+            <label class="check full"><input type="checkbox" id="sealGroup" data-k="sealGroup"> Show in groups of 8 for easier reading</label>
+            <label class="f full">Note shown with it<textarea class="field" id="sealNote" data-k="sealNote" rows="3"></textarea></label>
+          </div>
+        </details>
+
+        <details class="sec" open><summary>Notes</summary>
+          <p class="hint">Drag a placeholder into any note, or click one to insert it where your cursor is. They fill in on the invoice.</p>
+          <div class="chips" id="chips"></div>
+          <div class="grid">
+            <label class="f full">Payment<textarea class="field" id="payNote" data-k="payNote" rows="2"></textarea></label>
+            <label class="f">Payment link (optional)<input class="field" type="url" id="payLink" data-k="payLink" placeholder="https://ipn.eg/…"></label>
+            <label class="f">Link text<input class="field" id="payLabel" data-k="payLabel" placeholder="Pay online"></label>
+            <label class="f full">Extra note (optional)<textarea class="field" id="extraNote" data-k="extraNote" rows="2"></textarea></label>
+          </div>
+        </details>
+      </div>
+
+      <!-- ===== DESIGN ===== -->
+      <div data-pane="design" hidden>
+        <div class="h3">Template</div>
+        <div class="tpls" id="tpls"></div>
+        <p class="hint">Click a template, or drag it onto the page.</p>
+
+        <div class="grid">
+          <label class="f">Accent colour<input class="field" type="color" id="accent" data-k="brand.color"></label>
+          <label class="f">Hex<input class="field mono" id="accentHex" data-k="brand.color" maxlength="7"></label>
+          <label class="f">Text colour<input class="field" type="color" id="ink" data-k="brand.ink"></label>
+          <label class="f">Hex<input class="field mono" id="inkHex" data-k="brand.ink" maxlength="7"></label>
+        </div>
+
+        <div class="h3">Blocks <button class="btn small" type="button" id="bResetBlocks">Reset order</button></div>
+        <div class="list" id="blocks"></div>
+        <p class="hint">Drag to reorder, untick to hide. Changes save to the current profile.</p>
+
+        <div class="h3">Header and footer</div>
+        <div class="grid">
+          <label class="f">Wordmark<input class="field" id="bMain" data-k="brand.main"></label>
+          <label class="f">Wordmark accent<input class="field" id="bAcc" data-k="brand.accent"></label>
+          <label class="f full">Tagline<input class="field" id="bTag" data-k="brand.tagline"></label>
+          <label class="f">Footer left<input class="field" id="bFoot" data-k="brand.footer"></label>
+          <label class="f">Footer right<input class="field" id="bThanks" data-k="brand.thanks"></label>
+        </div>
+      </div>
+
+      <!-- ===== PROFILES ===== -->
+      <div data-pane="profiles" hidden>
+        <div class="h3">Your profiles <span class="row"><button class="btn small" type="button" id="bNewProfile">New</button><button class="btn small" type="button" id="bDupProfile">Duplicate</button></span></div>
+        <div class="list" id="profiles"></div>
+        <p class="hint">A profile is one identity you bill as: your details, logo text, colour and layout. Make one per brand or business.</p>
+
+        <div class="h3">Edit "<span id="profLabelEcho"></span>"</div>
+        <div class="grid">
+          <label class="f full">Profile name (only you see this)<input class="field" id="pLabel" data-p="label"></label>
+          <label class="f">Your name<input class="field" id="fName" data-k="from.name"></label>
+          <label class="f">Role<input class="field" id="fRole" data-k="from.role"></label>
+          <label class="f">Email<input class="field" type="email" id="fEmail" data-k="from.email"></label>
+          <label class="f">Phone<input class="field" id="fPhone" data-k="from.phone"></label>
+          <label class="f full">Address (one line each)<textarea class="field" id="fLines" data-k="from.lines" rows="2"></textarea></label>
+          <label class="f full">Default payment note<textarea class="field" id="pPay" data-p="payNote" rows="2"></textarea></label>
+          <label class="f">Default currency<select class="field" id="pCur" data-p="currency"><option>EGP</option><option>USD</option><option>EUR</option><option>AED</option></select></label>
+          <label class="f">Hours per day<input class="field" type="number" min="1" step="0.5" id="pPer" data-p="perDay"></label>
+        </div>
+        <p class="hint">Edits here update this invoice and every new one billed as this profile. Saved invoices keep the details they were made with.</p>
+
+        <div class="h3">Clients</div>
+        <div class="list" id="clients"></div>
+      </div>
+
+      <!-- ===== SAVED ===== -->
+      <div data-pane="saved" hidden>
+        <div class="h3">Saved invoices and receipts</div>
+        <div class="list" id="hist"></div>
+        <div class="row" style="margin-top:14px;flex-wrap:wrap">
+          <button class="btn small" type="button" id="bExport">Export everything (JSON)</button>
+          <button class="btn small" type="button" id="bImport">Import JSON</button>
+          <input type="file" id="fileIn" accept="application/json,.json" hidden>
+        </div>
+        <p class="hint">Everything lives in this browser only. Export now and then as a backup, or to move to another computer.</p>
+        <div class="h3">Start over</div>
+        <div class="row" id="wipeRow"><button class="btn small danger" type="button" id="bWipe">Erase all data in this browser</button></div>
+      </div>
+
+      <p class="status" id="status" role="status"></p>
+    </form>
+  </aside>
+
+  <main class="stage">
+    <div id="fitWarn" class="banner" hidden>This no longer fits on one A4 page. Shorten notes or item text, or hide a block.</div>
+    <div class="sheetwrap" id="wrap"><div class="sheet" id="sheet"></div></div>
+  </main>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= storage ================= */
+const KEY = "hesabak.v1";
+function load(){ try{ const v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; }catch(e){ return null; } }
+function persist(){ if(typeof doc!=='undefined') S.draft = doc; try{ localStorage.setItem(KEY, JSON.stringify(S)); return true; }catch(e){ return false; } }
+const clone = o => JSON.parse(JSON.stringify(o));
+const uid = () => Math.random().toString(36).slice(2,9);
+const today = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset()*6e4).toISOString().slice(0,10); };
+
+/* ================= constants ================= */
+const BLOCKS = { header:"Header", title:"Title and date", parties:"From and to", items:"Items and totals", history:"Payment history (receipts)", notes:"Notes", footer:"Footer" };
+const DEFAULT_ORDER = ["header","title","parties","items","history","notes","footer"];
+const TEMPLATES = { standard:"Standard", studio:"Studio", ledger:"Ledger", bold:"Bold" };
+/* The billing-statement layout puts the amount headline after the addresses. */
+const ORDERS = { standard:["header","parties","title","items","history","notes","footer"] };
+const orderFor = t => ORDERS[t] || DEFAULT_ORDER;
+const SEAL_NOTE = "It confirms what was delivered: the work and all the records behind it. If anything were changed later, the number would no longer match. Nothing needs to be done with it; please keep this page.";
+const TOKENS = [
+  ["{client}","Client name"],["{project}","Project"],["{invoice}","Invoice no."],["{date}","Date"],["{due}","Due date"],
+  ["{total}","Total"],["{balance}","Balance due"],["{name}","Your name"],["{email}","Your email"],["{phone}","Your phone"]
+];
+
+/* Fictional sample, shown until the user makes a profile of their own. */
+function sampleProfile(){
+  return {
+    id:"sample", label:"Sample studio", sample:true,
+    from:{ name:"Layla Mansour", role:"Product designer", email:"hello@example.com", phone:"", lines:"Alexandria, Egypt" },
+    brand:{ main:"laylamansour", accent:".design", tagline:"Research, interfaces, workshops.", footer:"laylamansour.design", thanks:"Thank you.", color:"#1F6F5C", ink:"#141414" },
+    design:{ template:"standard", blocks:orderFor("standard").map(id=>({id,on:true})) },
+    payNote:"Bank transfer to {name}. Please quote {invoice}.", currency:"EGP", perDay:7
+  };
+}
+function blankProfile(){
+  return {
+    id:uid(), label:"My profile", sample:false,
+    from:{ name:"", role:"", email:"", phone:"", lines:"" },
+    brand:{ main:"yourname", accent:".com", tagline:"", footer:"", thanks:"Thank you.", color:"#F26A1B", ink:"#141414" },
+    design:{ template:"standard", blocks:orderFor("standard").map(id=>({id,on:true})) },
+    payNote:"", currency:"EGP", perDay:7
+  };
+}
+function docFromProfile(p){
+  return {
+    kind:"invoice", profileId:p.id, clientCode:"", number:"", receiptNo:"", date:today(), due:"", currency:p.currency||"EGP", project:"",
+    from:clone(p.from), brand:clone(p.brand), design:clone(p.design),
+    to:{name:"",attn:"",lines:""},
+    mode:"hours", hours:{worked:0, perDay:p.perDay||7, rate:0, record:""},
+    items:[{desc:"",qty:1,price:0}],
+    tax:{mode:"none", rate:14, label:"VAT", inclusive:false},
+    advance:0, payments:[], seal:"", sealGroup:false, sealNote:SEAL_NOTE,
+    payNote:p.payNote||"", extraNote:""
+  };
+}
+function sampleDoc(){
+  const d = docFromProfile(sampleProfile());
+  Object.assign(d, { clientCode:"NILE", number:"NILE-2026-01", project:"Ordering app, discovery sprint", date:today(),
+    to:{ name:"Nile Bakery Co.", attn:"Attn: Operations lead", lines:"Smouha, Alexandria" },
+    hours:{ worked:40, perDay:7, rate:2000, record:"time log, first two weeks" }, advance:5000 });
+  return d;
+}
+
+/* ================= state ================= */
+let S = load();
+if(!S){ try{ const old = localStorage.getItem("invdesk.v2"); if(old){ S = JSON.parse(old); localStorage.setItem(KEY, old); } }catch(e){} } /* carry over data saved under the working name */
+if(!S){
+  S = { profiles:{ sample:sampleProfile() }, active:"sample", clients:{}, docs:{}, draft:null, tab:"details" };
+  /* carry over anything saved by the first version */
+  try{
+    const oldDocs = JSON.parse(localStorage.getItem("invdesk.docs")||"null");
+    const oldProf = JSON.parse(localStorage.getItem("invdesk.profile")||"null");
+    if(oldProf && oldProf.from){
+      const p = blankProfile(); p.label = oldProf.from.name || "My profile";
+      Object.assign(p.from, oldProf.from); Object.assign(p.brand, oldProf.brand||{}); p.payNote = oldProf.payNote||""; p.currency = oldProf.currency||"EGP";
+      S.profiles[p.id] = p; S.active = p.id;
+    }
+    if(oldDocs) Object.entries(oldDocs).forEach(([k,d])=>{ d.design = d.design || clone(sampleProfile().design); d.brand.color = d.brand.color || "#F26A1B"; d.profileId = S.active; S.docs[k] = d; });
+  }catch(e){}
+}
+let doc = S.draft || (S.active==="sample" ? sampleDoc() : docFromProfile(S.profiles[S.active]));
+const prof = () => S.profiles[S.active] || Object.values(S.profiles)[0];
+
+/* ================= maths ================= */
+const r2 = n => Math.round((+n||0)*100)/100;
+function daysFrom(h){ const per = +h.perDay||7; return Math.floor(((+h.worked||0)/per)*10 + 1e-9)/10; }
+function compute(d){
+  const base = d.mode==="hours" ? r2(daysFrom(d.hours) * (+d.hours.rate||0)) : r2(d.items.reduce((s,i)=> s + (+i.qty||0)*(+i.price||0), 0));
+  const rate = d.tax.mode==="eg" ? 14 : d.tax.mode==="custom" ? (+d.tax.rate||0) : 0;
+  let net = base, tax = 0, total = base;
+  if(rate>0){
+    if(d.tax.inclusive){ net = r2(base/(1+rate/100)); tax = r2(base-net); }
+    else { tax = r2(base*rate/100); total = r2(base+tax); }
+  }
+  const paid = d.kind==="receipt" ? r2(d.payments.reduce((s,p)=>s+(+p.amount||0),0)) : r2(+d.advance||0);
+  return { base, net, tax, rate, total, paid, balance:r2(total-paid) };
+}
+const fmtNum = n => new Intl.NumberFormat("en-US",{minimumFractionDigits:(Math.round(n*100)%100?2:0), maximumFractionDigits:2}).format(n);
+const money = (n,c) => `${c} ${fmtNum(Math.abs(n))}`;
+const fmtDate = s => { if(!s) return ""; const [y,m,dd] = s.split("-").map(Number); return new Date(Date.UTC(y,m-1,dd)).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}); };
+const esc = s => String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function fill(text, d, c){
+  const map = { client:d.to.name, project:d.project, invoice:d.number, date:fmtDate(d.date), due:fmtDate(d.due),
+    total:money(c.total,d.currency), balance:money(c.balance,d.currency), name:d.from.name, email:d.from.email, phone:d.from.phone };
+  return String(text||"").replace(/\{(\w+)\}/g, (m,k)=> k in map ? (map[k]||"") : m);
+}
+
+/* ================= numbering ================= */
+function nextNumber(code, year){
+  code = (code||"INV").toUpperCase().replace(/[^A-Z0-9]/g,"") || "INV";
+  const re = new RegExp("^"+code+"-"+year+"-(\\d+)$");
+  let max = 0; Object.keys(S.docs).forEach(k => { const m = k.match(re); if(m) max = Math.max(max, +m[1]); });
+  return `${code}-${year}-${String(max+1).padStart(2,"0")}`;
+}
+
+/* ================= render the sheet ================= */
+function sealHtml(d){
+  const s = (d.seal||"").replace(/\s+/g,""); if(!s) return "";
+  const half = Math.ceil(s.length/2), g = x => d.sealGroup ? (x.match(/.{1,8}/g)||[x]).join(" ") : x;
+  const a = s.slice(0,half), b = s.slice(half);
+  return esc(g(a)) + (b ? "<br>"+esc(g(b)) : "");
+}
+function render(){
+  const d = doc, c = compute(d), cur = d.currency, isR = d.kind==="receipt";
+  const rows = []; let basis = "";
+  if(d.mode==="hours"){
+    const h = d.hours, days = daysFrom(h);
+    rows.push([`Time worked${h.record?` (${esc(h.record)})`:""}`, `${fmtNum(+h.worked||0)} hours`]);
+    rows.push([`Working days (${fmtNum(+h.worked||0)} hours ÷ ${fmtNum(+h.perDay||7)} hours per day, rounded down)`, `${days.toFixed(1)} days`]);
+    rows.push([`Agreed rate`, `${money(+h.rate||0,cur)} per day`]);
+    basis = `${days.toFixed(1)} days × ${money(+h.rate||0,cur)}`;
+  } else {
+    d.items.filter(i=>i.desc||+i.price).forEach(i=>{
+      const q = +i.qty||0, p = +i.price||0;
+      rows.push([`${esc(i.desc)}${q!==1?` <span style="color:var(--muted)">(${fmtNum(q)} × ${money(p,cur)})</span>`:""}`, money(q*p,cur)]);
+    });
+  }
+  const tl = d.tax.mode==="eg" ? "VAT" : (d.tax.label||"Tax");
+  if(c.rate>0 && d.tax.inclusive){
+    rows.push([`Total${basis?` (${basis})`:""}`, money(c.total,cur)]);
+    rows.push([`of which ${esc(tl)} ${fmtNum(c.rate)}% (included; ${money(c.net,cur)} excluding tax)`, money(c.tax,cur), "sub"]);
+  } else if(c.rate>0){
+    rows.push([`Subtotal${basis?` (${basis})`:""}`, money(c.base,cur)]);
+    rows.push([`${esc(tl)} ${fmtNum(c.rate)}%`, money(c.tax,cur)]);
+    rows.push([`Total`, money(c.total,cur)]);
+  } else rows.push([`Total${basis?` (${basis})`:""}`, money(c.total,cur)]);
+
+  let tail;
+  if(!isR){
+    if(c.paid>0) rows.push([`Less: advance already received`, `− ${money(c.paid,cur)}`]);
+    tail = `<tr class="due"><td>Balance due</td><td>${c.balance<0?"− ":""}${money(c.balance,cur)}</td></tr>`;
+  } else {
+    tail = `<tr class="paid"><td>Amount paid</td><td>${money(c.paid,cur)}</td></tr>`;
+    if(Math.abs(c.balance)>=0.01) tail += `<tr class="sub"><td>${c.balance>0?"Balance still outstanding":"Overpaid"}</td><td>${money(c.balance,cur)}</td></tr>`;
+  }
+
+  const lastPay = isR ? d.payments.filter(p=>p.date).map(p=>p.date).sort().pop() : "";
+  const sub = [fmtDate(isR ? (lastPay||d.date) : d.date), esc(d.project)].filter(Boolean).join(" · ");
+  const full = isR && c.paid>0 && c.balance<=0.009 ? `<span class="s-stamp">Paid in full</span>` : "";
+  const fromLines = [d.from.role, d.from.lines, d.from.email, d.from.phone].filter(Boolean).join("\n");
+  const toLines = [d.to.attn, d.to.lines].filter(Boolean).join("\n");
+
+  const boxes = [];
+  if((d.seal||"").trim() && d.sealNote) boxes.push(`<b>About the delivery receipt number.</b> ${esc(fill(d.sealNote,d,c))}`);
+  if(d.payNote && !isR) boxes.push(`<b>Payment.</b> ${esc(fill(d.payNote,d,c))}`);
+  if(d.extraNote) boxes.push(esc(fill(d.extraNote,d,c)));
+
+  const B = {
+    header: `<header class="s-hd">
+        <div><div class="s-wm">${esc(d.brand.main)}<span>${esc(d.brand.accent)}</span></div>${d.brand.tagline?`<div class="s-tag">${esc(fill(d.brand.tagline,d,c))}</div>`:""}</div>
+        <div class="s-meta">
+          ${isR ? `<div class="s-pairs"><span class="s-lbl">Receipt no.</span><b>${esc(d.receiptNo||"—")}</b><span class="s-lbl">Invoice no.</span><b>${esc(d.number||"—")}</b></div>`
+                : `<div class="s-lbl">Invoice no.</div><div class="s-no">${esc(d.number||"—")}</div>`}
+          ${(d.seal||"").trim() ? `<div class="s-lbl">Delivery receipt no.</div><div class="s-seal">${sealHtml(d)}</div>` : ""}
+        </div></header>`,
+    title: `<div class="s-titleblk"><div class="s-title">${isR?"Receipt":"Invoice"}${full}</div>
+        <div class="s-sub">${isR?"Paid ":""}${sub}</div>${!isR && d.due ? `<div class="s-sub">Due ${fmtDate(d.due)}</div>` : ""}</div>`,
+    parties: `<div class="s-parties">
+        <div><div class="s-plbl">From</div><b>${esc(d.from.name)}</b><div>${esc(fromLines)}</div></div>
+        <div><div class="s-plbl">${isR?"Received from":"To"}</div><b>${esc(d.to.name)}</b><div>${esc(toLines)}</div></div></div>`,
+    items: `<table class="s-items"><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>
+        ${rows.map(([a,b,cls])=>`<tr${cls?` class="${cls}"`:""}><td>${a}</td><td>${b}</td></tr>`).join("")}${tail}</tbody></table>`,
+    history: isR && d.payments.length ? `<div class="s-hist"><div class="s-h2">Payment history</div>
+        <table class="s-items s-paytbl"><thead><tr><th>Payment method</th><th>Date</th><th>Reference</th><th>Amount paid</th></tr></thead><tbody>
+        ${d.payments.map(p=>`<tr><td>${esc(p.method)}</td><td>${p.date?esc(fmtDate(p.date)):"Before this invoice"}</td><td class="s-ref">${esc(p.ref)||"—"}</td><td>${money(+p.amount||0,cur)}</td></tr>`).join("")}
+        </tbody></table></div>` : "",
+    notes: boxes.length ? `<div class="s-boxes">${boxes.map(b=>`<div class="s-box">${b}</div>`).join("")}</div>` : "",
+    footer: (d.brand.footer||d.brand.thanks) ? `<footer class="s-ft"><span>${esc(fill(d.brand.footer,d,c))}</span><span>${esc(fill(d.brand.thanks,d,c))}</span></footer>` : ""
+  };
+
+  if(d.design.template==="standard") Object.assign(B, standardBlocks(d, c, isR, fromLines, toLines, boxes));
+
+  const sheet = document.getElementById("sheet");
+  sheet.className = "sheet t-" + (d.design.template||"studio");
+  sheet.style.setProperty("--ink", validHex(d.brand.ink) ? d.brand.ink : "#141414");
+  sheet.style.setProperty("--accent", validHex(d.brand.color) ? d.brand.color : "#F26A1B");
+  let first = true;
+  sheet.innerHTML = d.design.blocks.filter(b=>b.on && B[b.id]).map(b=>{
+    const cls = `s-blk s-blk-${b.id}${first?" first":""}`; first = false;
+    return b.id==="footer" ? B.footer.replace('class="s-ft"', `class="s-ft ${cls}"`) : `<div class="${cls}">${B[b.id]}</div>`;
+  }).join("");
+
+  document.getElementById("hDays").value = d.mode==="hours" ? `${daysFrom(d.hours).toFixed(1)} days` : "";
+  fit();
+  const over = sheet.scrollHeight > sheet.clientHeight + 1;
+  document.getElementById("fitWarn").hidden = !over;
+}
+/* Billing-statement layout: same data, laid out like the invoices and receipts that payment platforms send. */
+function standardBlocks(d, c, isR, fromLines, toLines, boxes){
+  const cur = d.currency, rate = c.rate;
+  const taxCell = rate>0 ? `<td>${fmtNum(rate)}%${d.tax.inclusive?" incl.":""}</td>` : "";
+  let rows = "";
+  if(d.mode==="hours"){
+    const h = d.hours, days = daysFrom(h);
+    rows = `<tr><td>Working days${d.project?` · ${esc(d.project)}`:""}<small>${fmtNum(+h.worked||0)} hours ÷ ${fmtNum(+h.perDay||7)} hours per day, rounded down${h.record?` · ${esc(h.record)}`:""}</small></td>
+      <td>${days.toFixed(1)} days</td><td>${money(+h.rate||0,cur)} / day</td>${taxCell}<td>${money(c.base,cur)}</td></tr>`;
+  } else {
+    rows = d.items.filter(i=>i.desc||+i.price).map(i=>{ const q = +i.qty||0, p = +i.price||0;
+      return `<tr><td>${esc(i.desc)}</td><td>${fmtNum(q)}</td><td>${money(p,cur)}</td>${taxCell}<td>${money(q*p,cur)}</td></tr>`; }).join("");
+  }
+  const tl = d.tax.mode==="eg" ? "VAT" : (d.tax.label||"Tax");
+  const T = rate>0 ? [["Subtotal", money(c.base,cur)]] : [];
+  if(rate>0){
+    T.push(["Total excluding tax", money(c.net,cur)]);
+    T.push([`${esc(tl)} (${fmtNum(rate)}%${d.tax.inclusive?" incl.":""} on ${money(c.net,cur)})`, money(c.tax,cur)]);
+  }
+  T.push(["Total", money(c.total,cur)]);
+  if(!isR){
+    if(c.paid>0) T.push(["Less: advance already received", `− ${money(c.paid,cur)}`]);
+    T.push(["Amount due", `${c.balance<0?"− ":""}${money(c.balance,cur)}`, "strong"]);
+  } else {
+    T.push(["Amount paid", money(c.paid,cur), "strong"]);
+    if(Math.abs(c.balance)>=0.01) T.push([c.balance>0?"Balance still outstanding":"Overpaid", money(c.balance,cur), "muted"]);
+  }
+  const lastPay = isR ? d.payments.filter(p=>p.date).map(p=>p.date).sort().pop() : "";
+  const when = isR ? fmtDate(lastPay||d.date) : fmtDate(d.due||d.date);
+  const full = isR && c.paid>0 && c.balance<=0.009 ? ` <span class="s-stamp">Paid in full</span>` : "";
+  const meta = [
+    ["Invoice number", esc(d.number||"—")],
+    ...(isR ? [["Receipt number", esc(d.receiptNo||"—")], ["Date paid", esc(when)]]
+            : [["Date of issue", esc(fmtDate(d.date))], ["Date due", esc(fmtDate(d.due||d.date))]]),
+    ...((d.seal||"").trim() ? [["Delivery receipt", `<span class="s-seal">${sealHtml(d)}</span>`]] : [])
+  ];
+  return {
+    header: `<div class="st-top"><div><h1 class="st-h1">${isR?"Receipt":"Invoice"}</h1>
+        <dl class="st-meta">${meta.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl></div>
+      <div class="st-logo"><div class="s-wm">${esc(d.brand.main)}<span>${esc(d.brand.accent)}</span></div>${d.brand.tagline?`<div class="s-tag">${esc(fill(d.brand.tagline,d,c))}</div>`:""}</div></div>`,
+    parties: `<div class="st-parties">
+        <div><b>${esc(d.from.name)}</b><div>${esc(fromLines)}</div></div>
+        <div><b>${isR?"Received from":"Bill to"}</b><div>${esc([d.to.name, toLines].filter(Boolean).join("\n"))}</div></div></div>`,
+    title: `<div class="st-head"><div class="st-amount">${isR ? `${money(c.paid,cur)} paid on ${esc(when)}` : `${money(c.balance,cur)} due ${esc(when)}`}${full}</div>
+        ${d.project && d.mode!=="hours" ? `<div class="st-sub">${esc(d.project)}</div>` : ""}
+        ${!isR && d.payLink ? `<a class="st-pay" href="${esc(d.payLink)}">${esc(d.payLabel||"Pay online")}</a>` : ""}</div>`,
+    items: `<table class="st-tbl"><thead><tr><th>Description</th><th>Qty</th><th>Unit price</th>${rate>0?"<th>Tax</th>":""}<th>Amount</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+        <div class="st-totals">${T.map(([a,b,cls])=>`<div${cls?` class="${cls}"`:""}><span>${a}</span><span>${b}</span></div>`).join("")}</div>`,
+    history: isR && d.payments.length ? `<div class="st-h2">Payment history</div>
+        <table class="st-tbl"><thead><tr><th>Payment method</th><th>Date</th><th>Reference</th><th>Amount paid</th></tr></thead><tbody>
+        ${d.payments.map(p=>`<tr><td>${esc(p.method)}</td><td>${p.date?esc(fmtDate(p.date)):"Before this invoice"}</td><td class="s-ref">${esc(p.ref)||"—"}</td><td>${money(+p.amount||0,cur)}</td></tr>`).join("")}
+        </tbody></table>` : "",
+    footer: `<footer class="s-ft"><span>${esc(fill(d.brand.footer,d,c))}</span><span>${esc(fill(d.brand.thanks,d,c)) || "Page 1 of 1"}</span></footer>`
+  };
+}
+const validHex = h => /^#[0-9a-f]{6}$/i.test(h||"");
+
+function fit(){
+  const wrap = document.getElementById("wrap"), sheet = document.getElementById("sheet");
+  const s = Math.min(1, wrap.clientWidth / sheet.offsetWidth);
+  sheet.style.transform = `scale(${s})`;
+  wrap.style.height = (sheet.offsetHeight*s) + "px";
+}
+new ResizeObserver(fit).observe(document.querySelector(".stage"));
+
+/* ================= form binding ================= */
+const getPath = (o,p) => p.split(".").reduce((a,k)=>a==null?a:a[k], o);
+const setPath = (o,p,v) => { const ks = p.split("."); const last = ks.pop(); ks.reduce((a,k)=>a[k]??(a[k]={}), o)[last] = v; };
+const $ = id => document.getElementById(id);
+
+function fillForm(){
+  document.querySelectorAll("[data-k]").forEach(el=>{
+    const v = getPath(doc, el.dataset.k);
+    if(el.type==="checkbox") el.checked = !!v; else el.value = v ?? "";
+  });
+  const p = prof();
+  document.querySelectorAll("[data-p]").forEach(el=>{ el.value = p[el.dataset.p] ?? ""; });
+  $("profLabelEcho").textContent = p.label;
+  syncToggles(); drawItems(); drawPays(); drawProfiles(); drawClients(); drawHist(); drawTemplates(); drawBlocks();
+}
+function syncToggles(){
+  document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.kind===doc.kind));
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===doc.mode));
+  document.querySelectorAll("[data-mode-pane]").forEach(p=>p.hidden = p.dataset.modePane!==doc.mode);
+  document.querySelectorAll("[data-receipt]").forEach(e=>e.hidden = doc.kind!=="receipt");
+  document.querySelectorAll("[data-invoice]").forEach(e=>e.hidden = doc.kind==="receipt");
+  document.querySelectorAll("[data-tax-custom]").forEach(e=>e.hidden = doc.tax.mode!=="custom");
+  document.querySelectorAll("[data-tax-on]").forEach(e=>e.hidden = doc.tax.mode==="none");
+  $("sampleBanner").hidden = !prof().sample;
+}
+
+/* Your details, brand and layout belong to the profile: mirror edits there so the next invoice has them. */
+function mirrorToProfile(){
+  const p = S.profiles[doc.profileId]; if(!p) return;
+  p.from = clone(doc.from); p.brand = clone(doc.brand); p.design = clone(doc.design);
+}
+let saveT;
+function changed(opts){
+  syncToggles(); render();
+  if(!opts || !opts.noMirror) mirrorToProfile();
+  S.draft = doc;
+  clearTimeout(saveT);
+  saveT = setTimeout(persist, 250);
+}
+window.addEventListener("pagehide", ()=>{ S.draft = doc; persist(); });
+document.addEventListener("visibilitychange", ()=>{ if(document.hidden){ S.draft = doc; persist(); } });
+
+$("ed").addEventListener("input", e=>{
+  const el = e.target;
+  if(el.dataset.p){ const p = prof(); p[el.dataset.p] = el.dataset.p==="perDay" ? (+el.value||7) : el.value;
+    if(el.dataset.p==="label"){ $("profLabelEcho").textContent = el.value; drawProfiles(); drawProfilePick(); }
+    if(el.dataset.p==="payNote" && doc.profileId===p.id){ doc.payNote = el.value; $("payNote").value = el.value; }
+    changed(); return; }
+  if(!el.dataset.k) return;
+  let v = el.type==="checkbox" ? el.checked : el.value;
+  if(el.dataset.num !== undefined) v = el.value==="" ? "" : +el.value;
+  if(el.dataset.k==="clientCode"){ v = v.toUpperCase(); if(el.value!==v) el.value = v; }
+  if(el.dataset.k==="brand.color"){
+    if(el.id==="accentHex" && !validHex(v)) return;
+    (el.id==="accent" ? $("accentHex") : $("accent")).value = v;
+  }
+  if(el.dataset.k==="brand.ink"){
+    if(el.id==="inkHex" && !validHex(v)) return;
+    (el.id==="ink" ? $("inkHex") : $("ink")).value = v;
+  }
+  setPath(doc, el.dataset.k, v);
+  changed();
+});
+$("ed").addEventListener("submit", e=>e.preventDefault());
+
+document.querySelectorAll("[data-kind]").forEach(b=>b.addEventListener("click",()=>{
+  doc.kind = b.dataset.kind;
+  if(doc.kind==="receipt" && !doc.receiptNo){ doc.receiptNo = (doc.number||"RCPT")+"-R"; $("receiptNo").value = doc.receiptNo; }
+  changed(); drawPays();
+}));
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{ doc.mode = b.dataset.mode; changed(); }));
+
+/* tabs */
+function showTab(t){
+  S.tab = t;
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===t));
+  document.querySelectorAll("[data-pane]").forEach(p=>p.hidden = p.dataset.pane!==t);
+  persist();
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+
+/* ================= items and payments ================= */
+function drawItems(){
+  $("items").innerHTML = doc.items.map((it,i)=>`
+    <div class="itemrow">
+      <input class="field" id="it-d-${i}" data-i="${i}" data-f="desc" value="${esc(it.desc)}" placeholder="Description" aria-label="Item ${i+1} description">
+      <input class="field" id="it-q-${i}" data-i="${i}" data-f="qty" type="number" step="any" value="${esc(it.qty)}" aria-label="Item ${i+1} quantity">
+      <input class="field" id="it-p-${i}" data-i="${i}" data-f="price" type="number" step="any" value="${esc(it.price)}" aria-label="Item ${i+1} unit price">
+      <button class="x" type="button" data-del="${i}" aria-label="Remove item ${i+1}">×</button>
+    </div>`).join("");
+}
+$("items").addEventListener("input", e=>{ const el = e.target, f = el.dataset.f; if(!f) return; e.stopPropagation();
+  doc.items[+el.dataset.i][f] = f==="desc" ? el.value : (el.value===""?"":+el.value); changed(); });
+$("items").addEventListener("click", e=>{ const i = e.target.dataset.del; if(i===undefined) return;
+  doc.items.splice(+i,1); if(!doc.items.length) doc.items.push({desc:"",qty:1,price:0}); drawItems(); changed(); });
+$("bAddItem").onclick = ()=>{ doc.items.push({desc:"",qty:1,price:0}); drawItems(); changed(); $(`it-d-${doc.items.length-1}`).focus(); };
+
+function drawPays(){
+  $("pays").innerHTML = doc.payments.map((p,i)=>`
+    <div class="payrow">
+      <input class="field" type="date" id="py-d-${i}" data-i="${i}" data-f="date" value="${esc(p.date)}" aria-label="Payment ${i+1} date">
+      <input class="field" id="py-m-${i}" data-i="${i}" data-f="method" value="${esc(p.method)}" placeholder="Bank transfer" aria-label="Payment ${i+1} method">
+      <input class="field" type="number" step="any" id="py-a-${i}" data-i="${i}" data-f="amount" value="${esc(p.amount)}" aria-label="Payment ${i+1} amount">
+      <button class="x" type="button" data-del="${i}" aria-label="Remove payment ${i+1}">×</button>
+      <input class="field mono ref" id="py-r-${i}" data-i="${i}" data-f="ref" value="${esc(p.ref)}" placeholder="Reference (optional)" aria-label="Payment ${i+1} reference">
+    </div>`).join("");
+}
+$("pays").addEventListener("input", e=>{ const el = e.target, f = el.dataset.f; if(!f) return; e.stopPropagation();
+  doc.payments[+el.dataset.i][f] = f==="amount" ? (el.value===""?"":+el.value) : el.value; changed(); });
+$("pays").addEventListener("click", e=>{ const i = e.target.dataset.del; if(i===undefined) return; doc.payments.splice(+i,1); drawPays(); changed(); });
+$("bAddPay").onclick = ()=>{ const b = compute(doc).balance; doc.payments.push({date:today(),method:"",amount:b>0?b:0,ref:""}); drawPays(); changed(); };
+
+/* ================= placeholders ================= */
+let lastText = null;
+document.addEventListener("focusin", e=>{ if(e.target.matches("textarea.field, input.field:not([type]), input.field[type=text]")) lastText = e.target; });
+$("chips").innerHTML = TOKENS.map(([t,l])=>`<button type="button" class="chip" draggable="true" data-token="${t}" title="${l}">${t}</button>`).join("");
+$("chips").addEventListener("dragstart", e=>{ const t = e.target.dataset.token; if(t){ e.dataTransfer.setData("text/plain", t); e.dataTransfer.effectAllowed = "copy"; } });
+$("chips").addEventListener("mousedown", e=>{ if(e.target.dataset.token) e.preventDefault(); }); /* keep focus in the text field */
+$("chips").addEventListener("click", e=>{
+  const t = e.target.dataset.token; if(!t) return;
+  const el = lastText && document.body.contains(lastText) ? lastText : $("extraNote");
+  const a = el.selectionStart ?? el.value.length, b = el.selectionEnd ?? a;
+  el.value = el.value.slice(0,a) + t + el.value.slice(b); el.focus(); el.setSelectionRange(a+t.length, a+t.length);
+  el.dispatchEvent(new Event("input",{bubbles:true}));
+});
+
+/* ================= templates ================= */
+function thumb(t){
+  const A = "var(--tc)";
+  const common = `<i style="left:12%;right:12%;top:52%;height:1.5%;background:#E3E3E3"></i><i style="left:12%;right:12%;top:58%;height:1.5%;background:#E3E3E3"></i><i style="left:12%;right:12%;top:64%;height:1.5%;background:#E3E3E3"></i><i style="right:12%;width:22%;top:71%;height:3%;background:${A}"></i><i style="left:12%;right:12%;top:91%;height:.8%;background:#E3E3E3"></i>`;
+  if(t==="standard") return `<i style="left:12%;width:32%;top:6%;height:5%;background:var(--ti)"></i><i style="right:12%;width:24%;top:6%;height:3%;background:var(--ti)"></i><i style="right:12%;width:8%;top:6%;height:3%;background:${A}"></i><i style="left:12%;width:26%;top:14%;height:1.5%;background:#B5B5B5"></i><i style="left:12%;width:26%;top:17%;height:1.5%;background:#B5B5B5"></i><i style="left:12%;width:44%;top:30%;height:3.5%;background:var(--ti)"></i><i style="left:12%;right:12%;top:42%;height:.8%;background:var(--ti)"></i><i style="left:12%;right:12%;top:48%;height:1.5%;background:#E3E3E3"></i><i style="left:48%;right:12%;top:58%;height:1.5%;background:#E3E3E3"></i><i style="left:48%;right:12%;top:63%;height:1.5%;background:#E3E3E3"></i><i style="right:12%;width:16%;top:68%;height:2.5%;background:${A}"></i><i style="left:12%;right:12%;top:91%;height:.8%;background:#E3E3E3"></i>`;
+  if(t==="bold") return `<i style="left:0;right:0;top:0;height:17%;background:var(--ti)"></i><i style="left:12%;width:34%;top:6%;height:4%;background:#fff"></i><i style="left:46%;width:10%;top:6%;height:4%;background:${A}"></i><i style="left:12%;width:52%;top:23%;height:8%;background:var(--ti)"></i>${common}`;
+  if(t==="ledger") return `<i style="left:12%;width:36%;top:6%;height:4%;background:var(--ti)"></i><i style="left:12%;right:12%;top:15%;height:1%;background:var(--ti)"></i><i style="left:12%;width:30%;top:22%;height:2.5%;background:var(--ti)"></i>${common}<i style="left:12%;right:12%;top:69%;height:.8%;background:var(--ti)"></i>`;
+  return `<i style="left:12%;width:34%;top:6%;height:4%;background:var(--ti)"></i><i style="left:46%;width:10%;top:6%;height:4%;background:${A}"></i><i style="left:12%;right:12%;top:15%;height:.6%;background:#E3E3E3"></i><i style="left:12%;width:36%;top:22%;height:6%;background:var(--ti)"></i>${common}`;
+}
+function drawTemplates(){
+  const col = validHex(doc.brand.color) ? doc.brand.color : "#F26A1B";
+  $("tpls").innerHTML = Object.entries(TEMPLATES).map(([k,l])=>`
+    <button type="button" class="tpl" draggable="true" data-tpl="${k}" aria-pressed="${doc.design.template===k}">
+      <div class="thumb" style="--tc:${col};--ti:${validHex(doc.brand.ink)?doc.brand.ink:"#141414"}">${thumb(k)}</div><span>${l}</span></button>`).join("");
+}
+function applyTemplate(t){
+  const cur = doc.design.blocks.map(b=>b.id).join(), was = orderFor(doc.design.template).join();
+  if(cur===was){ const on = Object.fromEntries(doc.design.blocks.map(b=>[b.id,b.on])); doc.design.blocks = orderFor(t).map(id=>({id,on:on[id]!==false})); drawBlocks(); }
+  doc.design.template = t; drawTemplates(); changed(); say(`${TEMPLATES[t]} template applied.`); }
+$("tpls").addEventListener("click", e=>{ const b = e.target.closest("[data-tpl]"); if(b) applyTemplate(b.dataset.tpl); });
+$("tpls").addEventListener("dragstart", e=>{ const b = e.target.closest("[data-tpl]"); if(b){ e.dataTransfer.setData("application/x-hesabak-tpl", b.dataset.tpl); e.dataTransfer.effectAllowed = "copy"; } });
+const wrapEl = $("wrap");
+wrapEl.addEventListener("dragover", e=>{ if(e.dataTransfer.types.includes("application/x-hesabak-tpl")){ e.preventDefault(); wrapEl.classList.add("drop"); } });
+wrapEl.addEventListener("dragleave", ()=>wrapEl.classList.remove("drop"));
+wrapEl.addEventListener("drop", e=>{ const t = e.dataTransfer.getData("application/x-hesabak-tpl"); wrapEl.classList.remove("drop"); if(t){ e.preventDefault(); applyTemplate(t); } });
+
+/* ================= blocks (drag to reorder) ================= */
+function drawBlocks(){
+  $("blocks").innerHTML = doc.design.blocks.map((b,i)=>`
+    <div class="blk${b.on?"":" off"}" draggable="true" data-bi="${i}" tabindex="0">
+      <span class="grip" aria-hidden="true">⋮⋮</span>
+      <input type="checkbox" id="blk-${b.id}" data-toggle="${i}" ${b.on?"checked":""} aria-label="Show ${BLOCKS[b.id]}">
+      <label class="nm" for="blk-${b.id}">${BLOCKS[b.id]}</label>
+      <button type="button" class="mv" data-up="${i}" aria-label="Move ${BLOCKS[b.id]} up">↑</button>
+      <button type="button" class="mv" data-down="${i}" aria-label="Move ${BLOCKS[b.id]} down">↓</button>
+    </div>`).join("");
+}
+function moveBlock(from, to){
+  const arr = doc.design.blocks; if(to<0 || to>=arr.length || from===to) return;
+  const [b] = arr.splice(from,1); arr.splice(to,0,b); drawBlocks(); changed();
+}
+let dragI = null;
+const blocksEl = $("blocks");
+blocksEl.addEventListener("dragstart", e=>{ const el = e.target.closest(".blk"); if(!el) return; dragI = +el.dataset.bi; el.classList.add("dragging"); e.dataTransfer.setData("text/x-blk", String(dragI)); e.dataTransfer.effectAllowed = "move"; });
+blocksEl.addEventListener("dragend", ()=>{ dragI = null; blocksEl.querySelectorAll(".blk").forEach(x=>x.classList.remove("dragging","over-top","over-bot")); });
+blocksEl.addEventListener("dragover", e=>{
+  const el = e.target.closest(".blk"); if(dragI===null || !el) return; e.preventDefault();
+  const r = el.getBoundingClientRect(), top = e.clientY < r.top + r.height/2;
+  blocksEl.querySelectorAll(".blk").forEach(x=>x.classList.remove("over-top","over-bot"));
+  el.classList.add(top?"over-top":"over-bot");
+});
+blocksEl.addEventListener("drop", e=>{
+  const el = e.target.closest(".blk"); if(dragI===null || !el) return; e.preventDefault();
+  const r = el.getBoundingClientRect(), top = e.clientY < r.top + r.height/2;
+  let to = +el.dataset.bi + (top?0:1); if(dragI < to) to--;
+  moveBlock(dragI, to);
+});
+blocksEl.addEventListener("click", e=>{
+  const t = e.target;
+  if(t.dataset.up) moveBlock(+t.dataset.up, +t.dataset.up-1);
+  else if(t.dataset.down) moveBlock(+t.dataset.down, +t.dataset.down+1);
+});
+blocksEl.addEventListener("change", e=>{ const i = e.target.dataset.toggle; if(i===undefined) return; e.stopPropagation(); doc.design.blocks[+i].on = e.target.checked; drawBlocks(); changed(); });
+blocksEl.addEventListener("input", e=>e.stopPropagation());
+$("bResetBlocks").onclick = ()=>{ doc.design.blocks = orderFor(doc.design.template).map(id=>({id,on:true})); drawBlocks(); changed(); };
+
+/* ================= profiles ================= */
+function drawProfilePick(){
+  $("profilePick").innerHTML = Object.values(S.profiles).map(p=>`<option value="${esc(p.id)}" ${p.id===doc.profileId?"selected":""}>${esc(p.label)}${p.sample?" (sample)":""}</option>`).join("");
+}
+function drawProfiles(){
+  drawProfilePick();
+  const confirmDel = drawProfiles.pending;
+  $("profiles").innerHTML = Object.values(S.profiles).map(p=>{
+    const del = confirmDel===p.id
+      ? `<button class="btn small danger" type="button" data-pdel-yes="${esc(p.id)}">Delete</button><button class="btn small" type="button" data-pdel-no>Keep</button>`
+      : (Object.keys(S.profiles).length>1 ? `<button class="x" type="button" data-pdel="${esc(p.id)}" aria-label="Delete profile ${esc(p.label)}">×</button>` : "");
+    return `<div class="li${p.id===S.active?" on":""}"><span class="dot" style="background:${validHex(p.brand.color)?p.brand.color:"#ccc"}"></span>
+      <button class="go" type="button" data-puse="${esc(p.id)}"><b>${esc(p.label)}</b><small>${esc(p.from.name||"No name yet")}</small></button>
+      ${p.sample?`<span class="tag">sample</span>`:""}${del}</div>`;
+  }).join("");
+}
+function useProfile(id){
+  const p = S.profiles[id]; if(!p) return;
+  S.active = id; doc.profileId = id;
+  doc.from = clone(p.from); doc.brand = clone(p.brand); doc.design = clone(p.design);
+  if(p.payNote) doc.payNote = p.payNote;
+  fillForm(); changed({noMirror:true}); persist();
+}
+$("profilePick").addEventListener("change", e=>{ e.stopPropagation(); useProfile(e.target.value); say(`Billing as ${prof().label}.`); });
+$("profilePick").addEventListener("input", e=>e.stopPropagation());
+$("profiles").addEventListener("click", e=>{
+  const t = e.target.closest("button"); if(!t) return;
+  if(t.dataset.puse){ useProfile(t.dataset.puse); }
+  else if(t.dataset.pdel){ drawProfiles.pending = t.dataset.pdel; drawProfiles(); }
+  else if(t.dataset.pdelYes){ const id = t.dataset.pdelYes; delete S.profiles[id]; drawProfiles.pending = null;
+    if(S.active===id || doc.profileId===id) useProfile(Object.keys(S.profiles)[0]); else { drawProfiles(); persist(); } say("Profile deleted."); }
+  else if(t.hasAttribute("data-pdel-no")){ drawProfiles.pending = null; drawProfiles(); }
+});
+function addProfile(p, msg){
+  /* the first real profile replaces the sample */
+  if(S.profiles.sample && S.profiles.sample.sample){ delete S.profiles.sample; }
+  S.profiles[p.id] = p; useProfile(p.id); showTab("profiles"); $("pLabel").focus(); $("pLabel").select(); say(msg);
+}
+$("bNewProfile").onclick = ()=> addProfile(blankProfile(), "New profile. Fill in your details; the page updates as you type.");
+$("bDupProfile").onclick = ()=>{ const p = clone(prof()); p.id = uid(); p.label = p.sample ? "My profile" : p.label + " copy"; p.sample = false; addProfile(p, "Profile copied."); };
+$("bMakeMine").onclick = ()=>{
+  const p = blankProfile();
+  if(doc.number && doc.number.startsWith("NILE")){ /* clear the sample client so the first real invoice starts clean */
+    doc = docFromProfile(p); }
+  addProfile(p, "Fill in your details here. They'll appear on every invoice.");
+};
+
+/* ================= clients ================= */
+function drawClients(){
+  const list = Object.values(S.clients).sort((a,b)=>a.name.localeCompare(b.name));
+  $("clientPick").innerHTML = `<option value="">Choose a saved client…</option>` + list.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}${c.code?` (${esc(c.code)})`:""}</option>`).join("");
+  $("clients").innerHTML = list.length ? list.map(c=>`<div class="li"><button class="go" type="button" data-cuse="${esc(c.id)}"><b>${esc(c.name)}</b><small>${esc(c.code||"")} ${esc(c.attn||"")}</small></button><button class="x" type="button" data-cdel="${esc(c.id)}" aria-label="Delete client ${esc(c.name)}">×</button></div>`).join("")
+    : `<div class="hint">No saved clients yet. Fill in a client on the Details tab and press Save client.</div>`;
+}
+function useClient(id){
+  const c = S.clients[id]; if(!c) return;
+  doc.to = { name:c.name, attn:c.attn, lines:c.lines }; doc.clientCode = c.code || doc.clientCode;
+  if(c.code && !doc.number) doc.number = nextNumber(c.code, (doc.date||today()).slice(0,4));
+  fillForm(); changed(); say(`Client set to ${c.name}.`);
+}
+$("clientPick").addEventListener("change", e=>{ e.stopPropagation(); if(e.target.value) useClient(e.target.value); });
+$("clientPick").addEventListener("input", e=>e.stopPropagation());
+$("bSaveClient").onclick = ()=>{
+  if(!doc.to.name){ say("Add the client's name first."); $("tName").focus(); return; }
+  const ex = Object.values(S.clients).find(c=>c.name.toLowerCase()===doc.to.name.toLowerCase());
+  const id = ex ? ex.id : uid();
+  S.clients[id] = { id, name:doc.to.name, attn:doc.to.attn, lines:doc.to.lines, code:doc.clientCode };
+  persist(); drawClients(); say(ex ? `Updated ${doc.to.name}.` : `Saved ${doc.to.name} to your clients.`);
+};
+$("clients").addEventListener("click", e=>{
+  const t = e.target.closest("button"); if(!t) return;
+  if(t.dataset.cuse){ useClient(t.dataset.cuse); showTab("details"); }
+  else if(t.dataset.cdel){ delete S.clients[t.dataset.cdel]; persist(); drawClients(); }
+});
+
+/* ================= saved docs ================= */
+let pendingDelete = null;
+function drawHist(){
+  const keys = Object.keys(S.docs).sort((a,b)=> (S.docs[b].date||"").localeCompare(S.docs[a].date||"") || b.localeCompare(a));
+  if(!keys.length){ $("hist").innerHTML = `<div class="hint">Nothing saved yet. Press Save at the top to keep the current invoice.</div>`; return; }
+  $("hist").innerHTML = keys.map(k=>{
+    const d = S.docs[k], c = compute(d);
+    const del = pendingDelete===k
+      ? `<button class="btn small danger" type="button" data-confirm="${esc(k)}">Delete</button><button class="btn small" type="button" data-cancel>Keep</button>`
+      : `<button class="x" type="button" data-askdel="${esc(k)}" aria-label="Delete ${esc(k)}">×</button>`;
+    return `<div class="li"><button class="go" type="button" data-open="${esc(k)}"><b class="mono">${esc(k)}</b><small>${d.kind==="receipt"?"receipt · ":""}${esc(d.to?.name||"")} · ${money(d.kind==="receipt"?c.paid:c.balance,d.currency)}</small></button>${del}</div>`;
+  }).join("");
+}
+$("hist").addEventListener("click", e=>{
+  const t = e.target.closest("button"); if(!t) return;
+  if(t.dataset.open){ doc = clone(S.docs[t.dataset.open]); if(S.profiles[doc.profileId]) S.active = doc.profileId; pendingDelete = null; fillForm(); changed({noMirror:true}); showTab("details"); say(`Opened ${t.dataset.open}.`); }
+  else if(t.dataset.askdel){ pendingDelete = t.dataset.askdel; drawHist(); }
+  else if(t.dataset.confirm){ delete S.docs[t.dataset.confirm]; persist(); say(`Deleted ${t.dataset.confirm}.`); pendingDelete = null; drawHist(); }
+  else if(t.hasAttribute("data-cancel")){ pendingDelete = null; drawHist(); }
+});
+
+let wipeArmed = false;
+$("bWipe").onclick = ()=>{
+  if(!wipeArmed){ wipeArmed = true; $("bWipe").textContent = "Yes, erase profiles, clients and invoices"; setTimeout(()=>{ wipeArmed=false; $("bWipe").textContent="Erase all data in this browser"; }, 5000); return; }
+  try{ localStorage.removeItem(KEY); localStorage.removeItem("invdesk.v2"); localStorage.removeItem("invdesk.docs"); localStorage.removeItem("invdesk.profile"); localStorage.removeItem("invdesk.draft"); }catch(e){}
+  location.reload();
+};
+
+function say(msg){ const s = $("status"); s.textContent = msg; clearTimeout(say.t); say.t = setTimeout(()=>s.textContent="", 4000); }
+const saveKey = d => d.kind==="receipt" ? (d.receiptNo || d.number+"-R") : d.number;
+
+/* ================= top actions ================= */
+$("bSuggest").onclick = ()=>{ doc.number = nextNumber(doc.clientCode, (doc.date||today()).slice(0,4)); $("number").value = doc.number; changed(); };
+$("bSave").onclick = ()=>{
+  const k = saveKey(doc);
+  if(!k){ say("Add an invoice number first."); showTab("details"); $("number").focus(); return; }
+  S.docs[k] = clone(doc);
+  say(persist() ? `Saved ${k}.` : "Couldn't save: this browser is blocking storage. Use Export instead.");
+  drawHist();
+};
+$("bNew").onclick = ()=>{
+  const code = doc.clientCode, to = clone(doc.to);
+  doc = docFromProfile(prof());
+  if(code){ doc.clientCode = code; doc.to = to; doc.number = nextNumber(code, doc.date.slice(0,4)); }
+  fillForm(); changed({noMirror:true}); showTab("details"); say("New invoice, same client. Your details are filled in.");
+};
+$("bDup").onclick = ()=>{
+  const c = clone(doc);
+  Object.assign(c, { kind:"invoice", date:today(), due:"", receiptNo:"", payments:[], advance:0, seal:"" });
+  c.number = nextNumber(c.clientCode, c.date.slice(0,4));
+  doc = c; fillForm(); changed({noMirror:true}); say(`Copied into ${c.number}. Check the hours and items.`);
+};
+$("bReceipt").onclick = ()=>{
+  if(doc.kind==="receipt"){ say("This is already a receipt."); return; }
+  const c = compute(doc);
+  if(doc.number) S.docs[doc.number] = clone(doc);
+  const r = clone(doc);
+  r.kind = "receipt"; r.receiptNo = (doc.number||"RCPT")+"-R"; r.payments = [];
+  if(c.paid>0) r.payments.push({date:"", method:"Advance", amount:c.paid, ref:""});
+  if(c.balance>0) r.payments.push({date:today(), method:"Bank transfer", amount:c.balance, ref:""});
+  doc = r; persist(); fillForm(); changed({noMirror:true});
+  say(`Saved ${r.number} and made its receipt. Fill in the payment dates and references.`);
+};
+$("bPdf").onclick = ()=>{
+  const old = document.title;
+  document.title = `${saveKey(doc)||"invoice"}-${doc.kind==="receipt"?"Receipt":"Invoice"}`;
+  window.print();
+  setTimeout(()=>document.title = old, 1000);
+};
+window.addEventListener("afterprint", fit);
+
+/* ================= export / import ================= */
+$("bExport").onclick = ()=>{
+  const data = { app:"hesabak", version:2, profiles:S.profiles, active:S.active, clients:S.clients, docs:S.docs };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `hesabak-${today()}.json`; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000); say("Exported.");
+};
+$("bImport").onclick = ()=>$("fileIn").click();
+$("fileIn").onchange = async e=>{
+  const f = e.target.files[0]; if(!f) return;
+  try{
+    const data = JSON.parse(await f.text());
+    if(data.profiles){
+      if(S.profiles.sample && S.profiles.sample.sample) delete S.profiles.sample;
+      Object.assign(S.profiles, data.profiles); Object.assign(S.clients, data.clients||{}); Object.assign(S.docs, data.docs||{});
+      const open = data.open && S.docs[data.open];
+      if(open){ doc = clone(open); S.active = S.profiles[doc.profileId] ? doc.profileId : Object.keys(S.profiles)[0]; }
+      else {
+        const id = data.active && S.profiles[data.active] ? data.active : Object.keys(data.profiles)[0];
+        if(!S.profiles[doc.profileId]) doc = docFromProfile(S.profiles[id]); /* the sample went away: start clean */
+        useProfile(id);
+      }
+    } else if(data.docs){ Object.assign(S.docs, data.docs); }
+    else throw new Error("shape");
+    persist(); fillForm(); changed({noMirror:true});
+    say(`Imported ${f.name}.`);
+  }catch(err){ say("That file isn't a Hesabak export."); }
+  e.target.value = "";
+};
+
+/* ================= start ================= */
+if(!S.profiles[doc.profileId]) doc.profileId = S.active;
+[doc, ...Object.values(S.profiles), ...Object.values(S.docs)].forEach(x=>{ if(x.brand && !x.brand.ink) x.brand.ink = "#141414"; if(x.design && !TEMPLATES[x.design.template]) x.design.template = "studio"; });
+S.active = doc.profileId;
+fillForm(); showTab(S.tab || "details"); render();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("../sw.js").catch(()=>{});
+})();
+</script>
+</body>
+</html>

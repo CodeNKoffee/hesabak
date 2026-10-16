@@ -5,7 +5,7 @@
 **Hesabak** (حسابك, "your bill") makes invoices and receipts in your browser. It is free, works
 offline, needs no account, and keeps everything on your own device.
 
-[Open the app](https://hesabak.hatemsoliman.dev) · [Source code](https://github.com/CodeNKoffee/hesabak) · [Report a bug](https://github.com/CodeNKoffee/hesabak/issues/new?template=bug_report.md)
+[Open the app](https://hesabak.hatemsoliman.dev/app/) · [Source code](https://github.com/CodeNKoffee/hesabak) · [Report a bug](https://github.com/CodeNKoffee/hesabak/issues/new?template=bug_report.md)
 
 ## Start here
 

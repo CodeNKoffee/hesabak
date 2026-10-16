@@ -4,7 +4,7 @@ Hesabak opens with a fictional sample (Layla Mansour billing Nile Bakery Co.) so
 
 ## Your first invoice
 
-1. Open [hesabak.hatemsoliman.dev](https://hesabak.hatemsoliman.dev).
+1. Open [hesabak.hatemsoliman.dev](https://hesabak.hatemsoliman.dev/app/).
 2. Press **Set up my profile** on the yellow banner. Fill in your name, role, email and address on the **Profiles** tab. The page on the right updates as you type.
 3. On **Design**, type your wordmark (for example `yourname` and `.studio`) and pick an accent colour.
 4. Back on **Details**, fill in the client, a client code such as `ACME`, and press **Next** to get the number `ACME-2026-01`.

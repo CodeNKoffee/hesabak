@@ -11,15 +11,16 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".svg": "image/svg+xml", ".png": "image/png",
-  ".webmanifest": "application/manifest+json", ".json": "application/json", ".xml": "application/xml", ".txt": "text/plain" };
+  ".webmanifest": "application/manifest+json", ".json": "application/json", ".xml": "application/xml", ".txt": "text/plain", ".webp": "image/webp", ".woff2": "font/woff2" };
 const server = createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
-  if (p === "/") p = "/index.html";
+  if (p.endsWith("/")) p += "index.html";
   const f = join(ROOT, p);
   if (!f.startsWith(ROOT) || !existsSync(f) || statSync(f).isDirectory()) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { "content-type": TYPES[extname(f)] || "application/octet-stream" }); res.end(readFileSync(f));
 }).listen(0);
-const URL_ = `http://127.0.0.1:${server.address().port}/`;
+const SITE = `http://127.0.0.1:${server.address().port}/`;
+const URL_ = `${SITE}app/`; // the app; the landing page is at SITE
 
 let failed = 0;
 async function check(name, fn) {
@@ -37,6 +38,39 @@ page.on("console", m => { if (m.type() === "error") errors.push(m.text()); });
 await page.goto(URL_);
 await page.waitForTimeout(300);
 const sheet = async () => (await page.locator("#sheet").innerText()).replace(/\s+/g, " ");
+
+
+console.log("Landing");
+for (const [name, w, h] of [["desktop", 1440, 900], ["laptop", 1280, 720], ["phone", 390, 844], ["small phone", 360, 640]]) {
+  await check(`fits in one screen on a ${name} (${w}x${h}) with no scrolling`, async () => {
+    const p = await browser.newPage({ viewport: { width: w, height: h } });
+    await p.goto(SITE); await p.waitForTimeout(1300);
+    const m = await p.evaluate(() => ({ sh: document.documentElement.scrollHeight, sw: document.documentElement.scrollWidth }));
+    await p.close();
+    assert(m.sh <= h && m.sw <= w, `page is ${m.sw}x${m.sh}`);
+  });
+}
+await check("the call to action opens the app", async () => {
+  const p = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  await p.goto(SITE); await p.click("#go"); await p.waitForURL(/\/app\/$/); await p.waitForSelector("#sheet");
+  const ok = (await p.title()).includes("Hesabak");
+  await p.close();
+  assert(ok, "app did not open");
+});
+await check("landing page has a title, canonical, Open Graph and JSON-LD", async () => {
+  const p = await browser.newPage();
+  await p.goto(SITE);
+  const t = await p.title(), canon = await p.getAttribute('link[rel="canonical"]', "href"), og = await p.getAttribute('meta[property="og:image"]', "content");
+  const ld = JSON.parse(await p.evaluate(() => document.querySelector('script[type="application/ld+json"]').textContent));
+  await p.close();
+  assert(t.includes("Hesabak") && canon === "https://hesabak.hatemsoliman.dev/" && /^https:\/\//.test(og), `title=${t} canonical=${canon}`);
+  assert(ld["@graph"].some(n => n["@type"] === "WebApplication"), "JSON-LD has no WebApplication");
+});
+await check("landing images and fonts exist", async () => {
+  const html = readFileSync(join(ROOT, "index.html"), "utf8");
+  const missing = [...html.matchAll(/(?:src|href|url\()=?["']?(landing\/[^"')\s]+)/g)].map(m => m[1]).filter(f => !existsSync(join(ROOT, f)));
+  assert(!missing.length, missing.join(", "));
+});
 
 console.log("App");
 await check("loads with the Hesabak title", async () => assert((await page.title()).includes("Hesabak"), `title was "${await page.title()}"`));
@@ -96,8 +130,9 @@ await check("manifest, robots.txt and sitemap.xml are valid", async () => {
   assert(m.name && m.icons?.length, "manifest needs a name and icons");
   for (const i of m.icons) assert(existsSync(join(ROOT, i.src)), `manifest icon missing: ${i.src}`);
   assert(/^Sitemap: https:\/\//m.test(readFileSync(join(ROOT, "robots.txt"), "utf8")), "robots.txt has no Sitemap line");
+  for (const f of ["llms.txt", "humans.txt", ".well-known/security.txt"]) assert(existsSync(join(ROOT, f)), `${f} missing`);
   const sm = readFileSync(join(ROOT, "sitemap.xml"), "utf8");
-  assert(sm.includes("<urlset") && sm.includes("<loc>https://"), "sitemap.xml has no URLs");
+  assert(sm.includes("<urlset") && sm.includes("<loc>https://") && sm.includes("/app/</loc>"), "sitemap.xml should list the landing page and the app");
 });
 await check("vercel.json parses and keeps the content security policy", async () => {
   const v = JSON.parse(readFileSync(join(ROOT, "vercel.json"), "utf8"));

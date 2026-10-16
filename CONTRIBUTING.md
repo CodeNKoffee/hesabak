@@ -20,7 +20,7 @@ or build something new from it. Contributions back are welcome too.
 ## Ground rules
 
 - **Your data never leaves the browser.** No analytics, no trackers, no calls to outside services. Pull requests that add any will be closed.
-- **No build step, no dependencies.** The app is `index.html`, `sw.js` and the manifest. Keep it that way unless we agree otherwise in an issue first.
+- **No build step, no dependencies.** The app is `app/index.html`, `sw.js` and the manifest; the landing page is `index.html`. Keep it that way unless we agree otherwise in an issue first.
 - **One page of A4.** Every template must print an invoice and a receipt on a single A4 sheet.
 - **Fictional data only.** Screenshots, tests and examples use the built-in sample (Layla Mansour, Nile Bakery Co.) or other made-up names. Never commit a real invoice.
 
@@ -30,7 +30,7 @@ or build something new from it. Contributions back are welcome too.
 - **Suggest a feature:** open an issue with the feature template and describe the invoice you're trying to make.
 - **Improve the guide:** the wiki's pages live in [`docs/wiki/`](docs/wiki), so fix or add a page with a normal pull request.
 - **Translate:** Arabic and right-to-left invoices are on the roadmap. Native speakers who can check wording are especially welcome.
-- **Add a template:** add its CSS under the existing templates in `index.html`, register it in `TEMPLATES`, and add a thumbnail in `thumb()`.
+- **Add a template:** add its CSS under the existing templates in `app/index.html`, register it in `TEMPLATES`, and add a thumbnail in `thumb()`.
 
 ## Making a change
 
